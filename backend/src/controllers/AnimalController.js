@@ -1,4 +1,5 @@
 import db from "../config/db.js";
+import Status from "../models/enum/Status.js"; // enum para animais de adoção
 
 export const cadastrarAnimal = (req, res) => {
   const {
@@ -20,8 +21,8 @@ export const cadastrarAnimal = (req, res) => {
 
   const sql = `
     INSERT INTO animais_adocao
-    (nome, idade, especie, descricao, localizacao, ong_id, protetor_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    (nome, idade, especie, descricao, localizacao, ong_id, protetor_id, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   db.query(
@@ -33,7 +34,8 @@ export const cadastrarAnimal = (req, res) => {
       descricao,
       localizacao,
       ong_id || null,
-      protetor_id || null
+      protetor_id || null,
+      Status.DISPONIVEL // usa enum
     ],
     (err, result) => {
       if (err) {
@@ -60,10 +62,10 @@ export const listarAnimais = (req, res) => {
       localizacao,
       status
     FROM animais_adocao
-    WHERE status = 'Disponivel'
+    WHERE status = ?
   `;
 
-  db.query(sql, (err, results) => {
+  db.query(sql, [Status.DISPONIVEL], (err, results) => {
     if (err) return res.status(500).json(err);
 
     res.json(results);
