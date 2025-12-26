@@ -1,10 +1,11 @@
 import mysql from "mysql2";
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "adocao_animais"
+  host: "127.0.0.1",     // TCP explícito
+  user: "adocao",        // usuário 
+  password: "123456",    // senha
+  database: "sistema_adocao",
+  port: 3306
 });
 
 db.connect((err) => {
