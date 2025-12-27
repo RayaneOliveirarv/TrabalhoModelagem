@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Login/Login.css'
@@ -33,7 +32,7 @@ const Login: React.FC = () => {
       <div className="login-card">
         <h3>LOGIN</h3>
         <p className="login-card-subtitle">Junte-se a nós e ajude a salvar vidas</p>
-        <form>
+        <form onSubmit={e => { e.preventDefault(); navigate('/feed'); }}>
           <label htmlFor="email">Email</label>
           <div className="input-wrapper">
             <input
@@ -62,7 +61,7 @@ const Login: React.FC = () => {
               👁️
             </span>
           </div>
-          <button type="submit" className="login-btn" disabled>
+          <button type="submit" className="login-btn" disabled={!(email && password)}>
             ENTRAR
           </button>
         </form>
