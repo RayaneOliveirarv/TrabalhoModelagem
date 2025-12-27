@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/AlterarCadastro/AlterarCadastro.css';
 
 const AlterarCadastro: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <div className="alterar-cadastro-bg">
       <div className="alterar-cadastro-center">
@@ -15,7 +17,7 @@ const AlterarCadastro: React.FC = () => {
         <div className="alterar-cadastro-card">
           <h3>Promover sua conta para o perfil de ONG?</h3>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 40, width: '100%' }}>
-            <button className="alterar-cadastro-btn">SIM</button>
+            <button className="alterar-cadastro-btn" onClick={() => navigate('/alterar-conta-ong')}>SIM</button>
             <button className="alterar-cadastro-btn">NÃO</button>
           </div>
         </div>
