@@ -1,13 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from '../components/Login';
-// Importe outras páginas quando existirem
+import Login from '../pages/Login';
+import Cadastro from '../pages/Cadastro';
 
 const AppRoutes: React.FC = () => {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/cadastro" element={<Cadastro />} />
       </Routes>
     </Router>
   );
