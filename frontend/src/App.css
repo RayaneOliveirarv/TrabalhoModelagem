@@ -50,6 +50,25 @@ div.row_spaced_flex{
   justify-content: space-between;
   align-items: center;
   width: 95%;
+  height: 100%;
+}
+div.Textarea_Container{
+  display: flex;
+  flex-direction: column;
+  justify-content:start;
+  align-items: start;
+  width: 100%;
+  margin-bottom: 2%;
+}
+div.dual_column{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+div.Ong_Register{
+  width: 50%;
 }
 /*fim divs*/
 
@@ -59,6 +78,14 @@ input.Input_p{
   padding: 10px;
   width: 90%;
   background-color: #d9d9d9;
+}
+textarea.Textarea_p{
+  border-radius: 10px;
+  padding: 10px;
+  width: 80%;
+  height: 8em;
+  background-color: #d9d9d9;
+  resize: none;
 }
 /*fim inputs*/
 
@@ -76,6 +103,15 @@ button.pad_btn{
 }
 button:hover{
   cursor: pointer;
+}
+button.submit_btn{
+  background-color: black;
+  color: #fff;
+  border-radius: 20px;
+  text-align: center;
+  width: 10vw;
+  height: 6vh;
+  padding: 10px
 }
 /*fim botões*/
 
@@ -100,4 +136,17 @@ button:hover{
 }
 .blue_button{
   background-color: #c3ebff;
+}
+.center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.left{
+  display: flex;
+  justify-content: left;
+  align-items: left;
+}
+.big_txt{
+  font-size: 1.8em;
 }
