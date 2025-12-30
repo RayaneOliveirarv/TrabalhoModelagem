@@ -1,43 +1,61 @@
-import db from "../config/db.js";
-import { gerarPDFAdocao } from "../utils/gerarPDF.js";
+import { DocumentoService } from "../services/DocumentoService.js";
+import { FormularioModel } from "../models/FormularioModel.js";
 import path from "path";
+import fs from "fs";
+import db from "../config/db.js"; // Import para consulta rápida
 
-export const gerarDocumentoAdocao = (req, res) => {
-  const { documentoId } = req.params;
+export const gerarDocumentoAdocao = async (req, res) => {
+  try {
+    const { formularioId } = req.params;
 
-  const sql = `
-    SELECT d.id, a.nome AS animal, a.especie, u.email AS adotante
-    FROM documentos_adocao d
-    JOIN animais_adocao a ON d.animal_id = a.id
-    JOIN usuarios u ON d.adotante_id = u.id
-    WHERE d.id = ?
-  `;
+    // Busca os dados necessários para preencher o PDF (RF15)
+    const dados = await FormularioModel.buscarDadosParaPdf(formularioId);
+    
+    if (!dados) {
+      return res.status(404).json({ erro: "Dados do formulário não encontrados." });
+    }
 
-  db.query(sql, [documentoId], (err, results) => {
-    if (err) return res.status(500).json(err);
-    if (results.length === 0)
-      return res.status(404).json({ mensagem: "Documento não encontrado" });
+    // Chama o service para criar o ficheiro físico
+    const caminhoRelativo = await DocumentoService.gerarTermoAdocao(dados);
 
-    const dados = results[0];
-    const nomeArquivo = `adocao_${documentoId}.pdf`;
-
-    gerarPDFAdocao(dados, nomeArquivo);
-
-    db.query(
-      "UPDATE documentos_adocao SET arquivo_pdf = ? WHERE id = ?",
-      [nomeArquivo, documentoId]
-    );
+    // RF16: Guarda o caminho no banco de dados para referência futura
+    await FormularioModel.salvarCaminhoDocumento(formularioId, caminhoRelativo);
 
     res.json({
-      mensagem: "PDF gerado com sucesso",
-      arquivo: nomeArquivo
+      mensagem: "Documento gerado com sucesso",
+      caminho: caminhoRelativo
     });
-  });
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
+  }
 };
 
-export const baixarDocumento = (req, res) => {
-  const { nome } = req.params;
-  const caminho = path.resolve("uploads/documentos", nome);
+// A11: Ação de baixar o documento no portal do Adotante
+export const baixarDocumento = async (req, res) => {
+  try {
+    const { formularioId } = req.params;
 
-  res.download(caminho);
+    // 1. Procura no banco qual é o arquivo associado a este formulário
+    const [resultado] = await db.promise().query(
+      "SELECT documento_caminho FROM formularios_adocao WHERE id = ?", 
+      [formularioId]
+    );
+
+    if (!resultado[0] || !resultado[0].documento_caminho) {
+      return res.status(404).json({ erro: "Documento não encontrado para este processo de adoção." });
+    }
+
+    // 2. Constrói o caminho absoluto para o ficheiro
+    const caminhoAbsoluto = path.resolve(resultado[0].documento_caminho);
+
+    // 3. Verifica se o ficheiro ainda existe no disco
+    if (fs.existsSync(caminhoAbsoluto)) {
+      // Força o download no navegador do usuário
+      res.download(caminhoAbsoluto);
+    } else {
+      res.status(404).json({ erro: "O ficheiro físico foi removido ou movido no servidor." });
+    }
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
+  }
 };

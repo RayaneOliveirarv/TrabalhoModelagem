@@ -1,100 +1,66 @@
-import db from "../config/db.js";
-import Status from "../models/enum/Status.js"; // enum para animais de adoção
+import { AnimalService } from "../services/AnimalService.js";
+import { AnimalModel } from "../models/AnimalModel.js"; 
+import db from "../config/db.js"; // Import direto para a trava de segurança
 
-export const cadastrarAnimal = (req, res) => {
-  const {
-    nome,
-    idade,
-    especie,
-    descricao,
-    localizacao,
-    ong_id,
-    protetor_id
-  } = req.body;
+export const cadastrarAnimal = async (req, res) => {
+  try {
+    const { ong_id, protetor_id } = req.body;
+    const usuarioId = ong_id || protetor_id;
 
-  // regra simples: só um dos dois pode existir
-  if (!ong_id && !protetor_id) {
-    return res.status(400).json({
-      mensagem: "Informe ong_id ou protetor_id"
-    });
-  }
+    // RF03/RF04: Bloqueio de segurança - Verifica se a conta está ativa
+    const [usuarios] = await db.promise().query(
+      "SELECT status_conta FROM usuarios WHERE id = ?", [usuarioId]
+    );
 
-  const sql = `
-    INSERT INTO animais_adocao
-    (nome, idade, especie, descricao, localizacao, ong_id, protetor_id, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `;
-
-  db.query(
-    sql,
-    [
-      nome,
-      idade,
-      especie,
-      descricao,
-      localizacao,
-      ong_id || null,
-      protetor_id || null,
-      Status.DISPONIVEL // usa enum
-    ],
-    (err, result) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json(err);
-      }
-
-      res.status(201).json({
-        mensagem: "Animal cadastrado para adoção",
-        animalId: result.insertId
+    if (!usuarios[0] || usuarios[0].status_conta !== 'Ativo') {
+      return res.status(403).json({ 
+        erro: "A tua conta ainda está pendente de aprovação ou está bloqueada. Não podes cadastrar animais." 
       });
     }
-  );
+
+    const result = await AnimalService.cadastrar(req.body);
+    res.status(201).json({
+      mensagem: "Animal cadastrado com sucesso",
+      animalId: result.insertId
+    });
+  } catch (err) {
+    res.status(400).json({ erro: err.message });
+  }
 };
 
-export const listarAnimais = (req, res) => {
-  const sql = `
-    SELECT 
-      id,
-      nome,
-      idade,
-      especie,
-      descricao,
-      localizacao,
-      status
-    FROM animais_adocao
-    WHERE status = ?
-  `;
-
-  db.query(sql, [Status.DISPONIVEL], (err, results) => {
-    if (err) return res.status(500).json(err);
-
-    res.json(results);
-  });
+export const listarAnimais = async (req, res) => {
+  try {
+    const animais = await AnimalService.listarDisponiveis();
+    res.json(animais);
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
+  }
 };
 
-export const buscarAnimalPorId = (req, res) => {
-  const { id } = req.params;
+export const buscarAnimalPorId = async (req, res) => {
+  try {
+    const animal = await AnimalService.buscarPorId(req.params.id);
+    if (!animal) return res.status(404).json({ mensagem: "Animal não encontrado" });
+    res.json(animal);
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
+  }
+};
 
-  const sql = `
-    SELECT 
-      id,
-      nome,
-      idade,
-      especie,
-      descricao,
-      localizacao,
-      status
-    FROM animais_adocao
-    WHERE id = ?
-  `;
+export const atualizarAnimal = async (req, res) => {
+  try {
+    await AnimalModel.atualizar(req.params.id, req.body);
+    res.json({ mensagem: "Informações do animal atualizadas com sucesso!" });
+  } catch (err) {
+    res.status(400).json({ erro: err.message });
+  }
+};
 
-  db.query(sql, [id], (err, results) => {
-    if (err) return res.status(500).json(err);
-
-    if (results.length === 0) {
-      return res.status(404).json({ mensagem: "Animal não encontrado" });
-    }
-
-    res.json(results[0]);
-  });
+export const deletarAnimal = async (req, res) => {
+  try {
+    await AnimalModel.excluir(req.params.id);
+    res.json({ mensagem: "Animal removido do sistema com sucesso!" });
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
+  }
 };

@@ -2,24 +2,27 @@ import PDFDocument from "pdfkit";
 import fs from "fs";
 import path from "path";
 
-export const gerarPDFAdocao = (dados, nomeArquivo) => {
-  const pasta = path.resolve("uploads/documentos");
+export const gerarPDFAdocao = (dados, caminhoCompleto) => {
+  // Pega a pasta a partir do caminho completo recebido
+  const pasta = path.dirname(caminhoCompleto);
 
+  // Garante que a pasta existe
   if (!fs.existsSync(pasta)) {
     fs.mkdirSync(pasta, { recursive: true });
   }
 
-  const caminho = path.join(pasta, nomeArquivo);
-
   const doc = new PDFDocument();
-  doc.pipe(fs.createWriteStream(caminho));
+  
+  // Aqui usamos o caminhoCompleto que já veio do Service
+  doc.pipe(fs.createWriteStream(caminhoCompleto));
 
   doc.fontSize(18).text("TERMO DE ADOÇÃO DE ANIMAL", { align: "center" });
   doc.moveDown();
 
-  doc.fontSize(12).text(`Adotante: ${dados.adotante}`);
-  doc.text(`Animal: ${dados.animal}`);
-  doc.text(`Espécie: ${dados.especie}`);
+  // Ajuste nos nomes dos campos para bater com o FormularioModel
+  doc.fontSize(12).text(`Adotante: ${dados.adotante_nome || 'Não informado'}`);
+  doc.text(`Animal: ${dados.animal_nome || 'Não informado'}`);
+  doc.text(`Espécie: ${dados.animal_especie || 'Não informado'}`);
   doc.text(`Data da Adoção: ${new Date().toLocaleDateString("pt-BR")}`);
   doc.moveDown();
 
@@ -30,9 +33,9 @@ export const gerarPDFAdocao = (dados, nomeArquivo) => {
   doc.moveDown(2);
   doc.text("Assinatura do Adotante: ___________________________");
   doc.moveDown();
-  doc.text("Assinatura do Protetor: ___________________________");
+  doc.text("Assinatura da ONG/Protetor: ___________________________");
 
   doc.end();
 
-  return nomeArquivo;
+  return caminhoCompleto;
 };
