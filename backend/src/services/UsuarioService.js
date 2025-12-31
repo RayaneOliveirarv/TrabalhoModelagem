@@ -1,7 +1,11 @@
 import { UsuarioModel } from "../models/UsuarioModel.js";
-import db from "../config/db.js"; // Import necessário para a lógica extra
+import db from "../config/db.js"; 
 
 export const UsuarioService = {
+  /**
+   * RF01: Cadastrar Usuário
+   * Cria a conta principal e o perfil detalhado vinculado.
+   */
   async cadastrar(dados) {
     const existente = await UsuarioModel.buscarPorEmail(dados.email);
 
@@ -25,17 +29,14 @@ export const UsuarioService = {
     else if (dados.tipo === "PROTETOR") tabelaExtra = "protetores_individuais";
 
     if (tabelaExtra) {
-      // O campo 'nome' vem do corpo da requisição (RF01) ou vira 'Novo Usuário' por padrão
       const nome = dados.nome || "Novo Usuário";
       
-      // Inserção direta na tabela de detalhes para vincular o usuario_id
       const sqlManual = `INSERT INTO ${tabelaExtra} (usuario_id, nome) VALUES (?, ?)`;
       
       try {
         await db.promise().query(sqlManual, [novoUsuarioId, nome]);
       } catch (err) {
         console.error(`Erro ao criar perfil em ${tabelaExtra}:`, err);
-        // Opcional: deletar o usuário criado se a criação do perfil falhar
         throw new Error("Erro ao criar perfil de usuário.");
       }
     }
@@ -43,6 +44,36 @@ export const UsuarioService = {
     return result;
   },
 
+  /**
+   * RF03: Salvar Documento de Verificação
+   * Lógica para salvar o caminho do comprovativo enviado por ONGs/Protetores.
+   */
+  async salvarDocumentoVerificacao(usuarioId, caminhoFicheiro) {
+    // 1. Busca o usuário para saber o tipo (ONG ou PROTETOR)
+    const [rows] = await db.promise().query(
+        "SELECT tipo FROM usuarios WHERE id = ?", [usuarioId]
+    );
+    
+    const usuario = rows[0];
+    if (!usuario) throw new Error("Usuário não encontrado.");
+
+    // 2. Define a tabela correta baseada no tipo
+    let tabela = "";
+    if (usuario.tipo === "ONG") tabela = "ongs";
+    else if (usuario.tipo === "PROTETOR") tabela = "protetores_individuais";
+
+    if (!tabela) {
+        throw new Error("Apenas perfis de ONG ou Protetor precisam de verificação documental.");
+    }
+
+    // 3. Atualiza a coluna documento_url na tabela correspondente
+    // Utilizamos o UsuarioModel.atualizarDetalhes que já existe no seu projeto
+    return await UsuarioModel.atualizarDetalhes(tabela, { documento_url: caminhoFicheiro }, usuarioId);
+  },
+
+  /**
+   * Login de Usuário
+   */
   async login(dados) {
     const usuario = await UsuarioModel.buscarPorEmail(dados.email);
 
@@ -58,10 +89,13 @@ export const UsuarioService = {
       id: usuario.id,
       email: usuario.email,
       tipo: usuario.tipo,
-      status_conta: usuario.status_conta // Adicionado para facilitar o controle no front
+      status_conta: usuario.status_conta 
     };
   },
 
+  /**
+   * Editar Perfil
+   */
   async editarPerfil(id, tipo, dados) {
     if (dados.senha) {
       await UsuarioModel.atualizarSenha(id, dados.senha);
@@ -74,11 +108,13 @@ export const UsuarioService = {
     else if (tipo === "PROTETOR") tabela = "protetores_individuais";
 
     if (tabela && Object.keys(dados).length > 0) {
-      // Importante: no seu Model, o parâmetro é (tabela, dados, usuarioId)
       return await UsuarioModel.atualizarDetalhes(tabela, dados, id);
     }
   },
 
+  /**
+   * Excluir Conta
+   */
   async deletarConta(id) {
     return await UsuarioModel.excluir(id);
   }

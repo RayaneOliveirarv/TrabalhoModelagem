@@ -1,6 +1,7 @@
 -- ==========================================================
--- SCHEMA FINAL ATUALIZADO - VERSÃO CORRIGIDA PARA O POSTMAN
--- ALINHADO COM FORMULARIO_MODEL (EXPERIENCIA E AMBIENTE)
+-- SCHEMA FINAL ATUALIZADO - VERSÃO COMPLETA
+-- INCLUI RF03 (UPLOAD DE DOCUMENTAÇÃO DE ONGS/PROTETORES)
+-- ALINHADO COM FORMULARIO_MODEL E REQUISITOS DE MODERAÇÃO
 -- ==========================================================
 
 CREATE DATABASE IF NOT EXISTS sistema_adocao;
@@ -22,7 +23,7 @@ CREATE TABLE administradores (
   FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
--- 2. PERFIS DETALHADOS
+-- 2. PERFIS DETALHADOS (ATUALIZADOS COM RF03)
 CREATE TABLE adotantes (
   usuario_id INT PRIMARY KEY,
   nome VARCHAR(100),
@@ -37,6 +38,7 @@ CREATE TABLE protetores_individuais (
   historia TEXT,
   contato VARCHAR(100),
   localizacao VARCHAR(100),
+  documento_url VARCHAR(255), -- RF03: Comprovativo para validação do Admin
   FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
@@ -48,6 +50,7 @@ CREATE TABLE ongs (
   historia TEXT,
   contato VARCHAR(100),
   localizacao VARCHAR(100),
+  documento_url VARCHAR(255), -- RF03: Comprovativo (Contrato Social/CNPJ)
   FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
@@ -72,14 +75,13 @@ CREATE TABLE animais_adocao (
   FOREIGN KEY (protetor_id) REFERENCES protetores_individuais(usuario_id) ON DELETE SET NULL
 );
 
--- 4. PROCESSOS E FORMULÁRIOS (RF10, RF12, RF18) - CORRIGIDO
--- Alterado dados_adotante JSON para colunas TEXT para aceitar os dados do Postman
+-- 4. PROCESSOS E FORMULÁRIOS (RF10, RF12, RF18)
 CREATE TABLE formularios_adocao (
   id INT AUTO_INCREMENT PRIMARY KEY,
   adotante_id INT NOT NULL,
   animal_id INT NOT NULL,
-  experiencia TEXT NOT NULL, -- Corrigido: Agora o banco reconhece a coluna
-  ambiente TEXT NOT NULL,    -- Corrigido: Agora o banco reconhece a coluna
+  experiencia TEXT NOT NULL,
+  ambiente TEXT NOT NULL,
   justificativa TEXT,
   data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   status ENUM('Enviado', 'Em_Analise', 'Aprovado', 'Rejeitado') DEFAULT 'Enviado',

@@ -2,24 +2,25 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-// Garante que a pasta de uploads existe
-const dir = "./uploads/animais/";
-if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+// ==========================================
+// 1. CONFIGURAÇÃO PARA FOTOS DE ANIMAIS
+// ==========================================
+const dirAnimais = "./uploads/animais/";
+if (!fs.existsSync(dirAnimais)) {
+    fs.mkdirSync(dirAnimais, { recursive: true });
 }
 
-const storage = multer.diskStorage({
+const storageAnimais = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, dir);
+    cb(null, dirAnimais);
   },
   filename: (req, file, cb) => {
-    // Gera um nome único: timestamp + nome original limpo
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+    cb(null, "PET-" + uniqueSuffix + path.extname(file.originalname));
   }
 });
 
-const fileFilter = (req, file, cb) => {
+const filterAnimais = (req, file, cb) => {
   const extensoesPermitidas = /jpeg|jpg|png/;
   const mimetype = extensoesPermitidas.test(file.mimetype);
   const extname = extensoesPermitidas.test(path.extname(file.originalname).toLowerCase());
@@ -27,11 +28,48 @@ const fileFilter = (req, file, cb) => {
   if (mimetype && extname) {
     return cb(null, true);
   }
-  cb(new Error("Apenas imagens (jpeg, jpg, png) são permitidas!"));
+  cb(new Error("Apenas imagens (jpeg, jpg, png) são permitidas para o animal!"));
 };
 
 export const uploadAnimal = multer({ 
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: { fileSize: 2 * 1024 * 1024 } // Limite de 2MB
+  storage: storageAnimais,
+  fileFilter: filterAnimais,
+  limits: { fileSize: 2 * 1024 * 1024 } // 2MB
+});
+
+// ==========================================
+// 2. CONFIGURAÇÃO PARA DOCUMENTOS (RF03)
+// ==========================================
+const dirDocs = "./uploads/documentos_verificacao/";
+if (!fs.existsSync(dirDocs)) {
+    fs.mkdirSync(dirDocs, { recursive: true });
+}
+
+const storageDocs = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, dirDocs);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
+    // Prefixo DOC para identificar documentos de ONGs/Protetores
+    cb(null, "DOC-" + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const filterDocs = (req, file, cb) => {
+  // Para documentos, permitimos PDF além de imagens
+  const extensoesPermitidas = /jpeg|jpg|png|pdf/;
+  const mimetype = extensoesPermitidas.test(file.mimetype) || file.mimetype === 'application/pdf';
+  const extname = extensoesPermitidas.test(path.extname(file.originalname).toLowerCase());
+
+  if (mimetype && extname) {
+    return cb(null, true);
+  }
+  cb(new Error("Formato inválido! Envie o comprovativo em PDF, JPEG ou PNG."));
+};
+
+export const uploadDocumento = multer({ 
+  storage: storageDocs,
+  fileFilter: filterDocs,
+  limits: { fileSize: 5 * 1024 * 1024 } // Limite maior para documentos (5MB)
 });
