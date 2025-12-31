@@ -72,7 +72,7 @@ npm install
 npm run dev
 O servidor estará ativo em: http://localhost:3000
 
-### 📑 Simulação Completa do Sistema (End-to-End)
+### 📑 Simulação Completa do Sistema (End-to-End) (Utilizei o o programa Postman pra fazer os testes)
 Siga esta ordem exata para validar os 20 Requisitos Funcionais (RFs).
 
 #### 1️⃣ Fase de Cadastro: Criando os Personagens (RF01)
