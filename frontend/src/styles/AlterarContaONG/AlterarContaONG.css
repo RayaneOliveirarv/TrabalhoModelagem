@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap');
+
+.alterar-cadastro-bg {
+  min-height: 100vh;
+  width: 100vw;
+  background: linear-gradient(120deg, #f8fafc 0%, #e0f7fa 50%, #fce4ec 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.alterar-cadastro-center {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.alterar-cadastro-card {
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: 0 8px 32px 0 #f8bbd044, 0 2px 8px #b2ebf244;
+  padding: 44px 36px 32px 36px;
+  max-width: 700px;
+  width: 100%;
+  margin: 32px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border: 2.5px solid #b2ebf2;
+  animation: card-fadein 1.2s cubic-bezier(.68,-0.55,.27,1.55);
+}
+@keyframes card-fadein {
+  0% { opacity: 0; transform: translateY(40px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.alterar-cadastro-title {
+  font-size: 2rem;
+  font-weight: 900;
+  margin-bottom: 18px;
+  color: #ab47bc;
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  text-shadow: 0 2px 8px #fce4ec88;
+}
+
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input-row {
+  display: flex;
+  gap: 32px;
+}
+.input-row > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 1.01rem;
+  font-weight: 700;
+  color: #ab47bc;
+  margin-bottom: 4px;
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+}
+
+.input-ong {
+  background: #fce4ec22;
+  border: 1.5px solid #b2ebf2;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  margin-bottom: 0;
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  transition: border 0.2s, box-shadow 0.2s;
+  color: #222;
+  max-width: 260px;
+}
+.input-ong:focus {
+  border: 1.5px solid #ab47bc;
+  background: #fff;
+  box-shadow: 0 2px 8px #fce4ec44;
+}
+
+.textarea-ong {
+  resize: none;
+  min-width: 320px;
+  max-width: 100%;
+  min-height: 100px;
+  border-radius: 12px;
+  border: 1.5px solid #b2ebf2;
+  background: #fce4ec22;
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  padding: 12px 14px;
+  font-size: 1rem;
+  color: #222;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+.textarea-ong:focus {
+  border: 1.5px solid #ab47bc;
+  background: #fff;
+  box-shadow: 0 2px 8px #fce4ec44;
+}
+
+.form-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.alterar-cadastro-btn {
+  background: linear-gradient(90deg, #b2ebf2 0%, #fce4ec 100%);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 12px 32px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  box-shadow: 0 2px 12px #f8bbd044;
+}
+.alterar-cadastro-btn:hover {
+  background: linear-gradient(90deg, #ab47bc 0%, #00838f 100%);
+}
+
+@media (max-width: 700px) {
+  .alterar-cadastro-card {
+    padding: 18px 6px 14px 6px;
+    max-width: 99vw;
+    border-radius: 14px;
+  }
+  .alterar-cadastro-title {
+    font-size: 1.2rem;
+  }
+  .input-row {
+    gap: 12px;
+  }
+  .input-ong {
+    max-width: 140px;
+  }
+  .textarea-ong {
+    min-width: 180px;
+  }
+  form {
+    gap: 10px;
+  }
+  label {
+    font-size: 0.93rem;
+  }
+  .alterar-cadastro-btn {
+    font-size: 0.97rem;
+    padding: 8px 0;
+  }
+}

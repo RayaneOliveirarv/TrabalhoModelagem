@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+.novo-post-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #dbdbdb;
+  border: none;
+  border-radius: 12px;
+  padding: 6px 18px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #222;
+  cursor: pointer;
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  transition: background 0.2s, color 0.2s;
+  height: 38px;
+  min-width: 120px;
+  max-width: 180px;
+  margin-left: 8px;
+}
+
+.novo-post-btn:hover {
+  background: #fce4ec;
+  color: #ab47bc;
+}
+
+.novo-post-icon {
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.novo-post-label {
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 700px) {
+  .novo-post-btn {
+    padding: 5px 10px;
+    font-size: 0.93rem;
+    gap: 5px;
+    height: 32px;
+    min-width: 90px;
+    max-width: 120px;
+    margin-left: 4px;
+  }
+  .novo-post-label {
+    font-size: 0.93rem;
+  }
+  .novo-post-icon {
+    font-size: 1rem;
+  }
+}

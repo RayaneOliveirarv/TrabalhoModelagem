@@ -1,16 +1,19 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login_Register_Screen from '../components/Login';
-import Ong_register from '../components/Ong_register';
-import Feed from '../components/Feed';
-// Importe outras páginas quando existirem
+import Login from '../pages/Login';
+import Cadastro from '../pages/Cadastro';
+import AlterarCadastro from '../pages/AlterarCadastro';
+import AlterarContaONG from '../pages/AlterarContaONG';
+import Feed from '../pages/Feed';
 
 const AppRoutes: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login_Register_Screen />} />
-        <Route path="/ong_register" element={<Ong_register />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/alterarCadastro" element={<AlterarCadastro />} />
+        <Route path="/alterar-conta-ong" element={<AlterarContaONG />} />
         <Route path="/feed" element={<Feed />} />
       </Routes>
     </Router>

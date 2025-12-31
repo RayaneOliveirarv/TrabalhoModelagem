@@ -1,0 +1,177 @@
+import db from "../config/db.js";
+
+export const AnimalModel = {
+  // RF04 e RF05 - Cadastrar Animal com suporte a Foto e Categorias
+  criar(dados) {
+    const sql = `
+      INSERT INTO animais_adocao
+      (nome, idade, especie, porte, descricao, localizacao, foto_url, ong_id, protetor_id, status, categoria, data_desaparecimento, ultima_localizacao)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    return new Promise((resolve, reject) => {
+      db.query(
+        sql,
+        [
+          dados.nome,
+          dados.idade,
+          dados.especie,
+          dados.porte || 'Não informado',
+          dados.descricao,
+          dados.localizacao,
+          dados.foto_url || null, // RF05: Caminho da imagem processada pelo Multer
+          dados.ong_id || null,
+          dados.protetor_id || null,
+          dados.status || 'Disponivel',
+          dados.categoria || 'Adocao',
+          dados.data_desaparecimento || null,
+          dados.ultima_localizacao || null
+        ],
+        (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        }
+      );
+    });
+  },
+
+  /**
+   * RF06 - Busca Avançada com Filtros Dinâmicos
+   * Constrói a query SQL baseada apenas nos filtros que o usuário preencher.
+   */
+  buscarAvancada(filtros) {
+    // COALESCE(o.nome, p.nome) pega o primeiro nome não nulo encontrado entre as tabelas
+    let sql = `
+      SELECT a.*, 
+             COALESCE(o.nome, p.nome) as dono_nome
+      FROM animais_adocao a
+      LEFT JOIN ongs o ON a.ong_id = o.usuario_id
+      LEFT JOIN protetores_individuais p ON a.protetor_id = p.usuario_id
+      WHERE 1=1`; // 'WHERE 1=1' facilita a concatenação de múltiplos 'AND'
+    
+    const valores = [];
+
+    // Adiciona condições dinamicamente
+    if (filtros.categoria) {
+      sql += ` AND a.categoria = ?`;
+      valores.push(filtros.categoria);
+    }
+    if (filtros.especie) {
+      sql += ` AND a.especie = ?`;
+      valores.push(filtros.especie);
+    }
+    if (filtros.porte) {
+      sql += ` AND a.porte = ?`;
+      valores.push(filtros.porte);
+    }
+    if (filtros.localizacao) {
+      // LIKE permite buscas parciais (ex: "Lisboa" encontra "Distrito de Lisboa")
+      sql += ` AND a.localizacao LIKE ?`;
+      valores.push(`%${filtros.localizacao}%`);
+    }
+
+    sql += ` ORDER BY a.id DESC`;
+
+    return new Promise((resolve, reject) => {
+      db.query(sql, valores, (err, results) => {
+        if (err) reject(err);
+        else resolve(results);
+      });
+    });
+  },
+
+  /**
+   * Busca detalhes de um animal e informações de contato do dono.
+   */
+  buscarPorId(id) {
+    const sql = `
+      SELECT a.*, 
+             COALESCE(o.contato, p.contato) as contato_telefone,
+             COALESCE(o.nome, p.nome) as dono_nome
+      FROM animais_adocao a
+      LEFT JOIN ongs o ON a.ong_id = o.usuario_id
+      LEFT JOIN protetores_individuais p ON a.protetor_id = p.usuario_id
+      WHERE a.id = ?
+    `;
+
+    return new Promise((resolve, reject) => {
+      db.query(sql, [id], (err, results) => {
+        if (err) reject(err);
+        else resolve(results[0]);
+      });
+    });
+  },
+
+  // Atualiza o status (ex: de 'Disponivel' para 'Em_Analise' ou 'Adotado')
+  atualizarStatus(id, status) {
+    const sql = `UPDATE animais_adocao SET status = ? WHERE id = ?`;
+    return new Promise((resolve, reject) => {
+      db.query(sql, [status, id], (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+  },
+
+  // RF08 - MÉTODOS DE FAVORITOS
+  favoritar(adotanteId, animalId) {
+    const sql = `INSERT INTO favoritos (adotante_id, animal_id) VALUES (?, ?)`;
+    return new Promise((resolve, reject) => {
+      db.query(sql, [adotanteId, animalId], (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
+      });
+    });
+  },
+
+  listarFavoritos(adotanteId) {
+    const sql = `
+      SELECT a.* FROM animais_adocao a
+      JOIN favoritos f ON a.id = f.animal_id
+      WHERE f.adotante_id = ?
+    `;
+    return new Promise((resolve, reject) => {
+      db.query(sql, [adotanteId], (err, results) => {
+        if (err) reject(err);
+        else resolve(results);
+      });
+    });
+  },
+
+  desfavoritar(adotanteId, animalId) {
+    const sql = `DELETE FROM favoritos WHERE adotante_id = ? AND animal_id = ?`;
+    return new Promise((resolve, reject) => {
+      db.query(sql, [adotanteId, animalId], (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
+      });
+    });
+  },
+
+  /**
+   * Atualização dinâmica de campos.
+   * Transforma as chaves de um objeto em uma string SET do SQL.
+   */
+  atualizar(id, dados) {
+    const campos = Object.keys(dados).map(key => `${key} = ?`).join(", ");
+    const valores = [...Object.values(dados), id];
+    const sql = `UPDATE animais_adocao SET ${campos} WHERE id = ?`;
+    
+    return new Promise((resolve, reject) => {
+      db.query(sql, valores, (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
+      });
+    });
+  },
+
+  excluir(id) {
+    const sql = `DELETE FROM animais_adocao WHERE id = ?`;
+    return new Promise((resolve, reject) => {
+      db.query(sql, [id], (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
+      });
+    });
+  }
+};
