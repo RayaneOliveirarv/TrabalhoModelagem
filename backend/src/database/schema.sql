@@ -1,7 +1,7 @@
 -- ==========================================================
--- SCHEMA FINAL ATUALIZADO - VERSÃO COMPLETA
--- INCLUI RF03 (UPLOAD DE DOCUMENTAÇÃO DE ONGS/PROTETORES)
--- ALINHADO COM FORMULARIO_MODEL E REQUISITOS DE MODERAÇÃO
+-- SCHEMA FINAL ATUALIZADO - VERSÃO COMPLETA E INTEGRADA
+-- INCLUI RF03 (UPLOAD), RF19/20 (MODERAÇÃO E NOTIFICAÇÕES)
+-- ALINHADO COM TODOS OS CONTROLLERS E MODELS
 -- ==========================================================
 
 CREATE DATABASE IF NOT EXISTS sistema_adocao;
@@ -14,7 +14,7 @@ CREATE TABLE usuarios (
   senha VARCHAR(100) NOT NULL,
   tipo ENUM('ADOTANTE', 'PROTETOR', 'ONG', 'ADMIN') NOT NULL,
   status_conta ENUM('Pendente', 'Ativo', 'Bloqueado') DEFAULT 'Pendente',
-  motivo_status TEXT -- RF19: Justificativa de bloqueio/ativação
+  motivo_status TEXT -- RF19: Justificativa de moderação
 );
 
 CREATE TABLE administradores (
@@ -23,7 +23,7 @@ CREATE TABLE administradores (
   FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
--- 2. PERFIS DETALHADOS (ATUALIZADOS COM RF03)
+-- 2. PERFIS DETALHADOS (COM SUPORTE A DOCUMENTAÇÃO RF03)
 CREATE TABLE adotantes (
   usuario_id INT PRIMARY KEY,
   nome VARCHAR(100),
@@ -38,7 +38,7 @@ CREATE TABLE protetores_individuais (
   historia TEXT,
   contato VARCHAR(100),
   localizacao VARCHAR(100),
-  documento_url VARCHAR(255), -- RF03: Comprovativo para validação do Admin
+  documento_url VARCHAR(255), -- RF03: Caminho do arquivo de verificação
   FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
@@ -50,7 +50,7 @@ CREATE TABLE ongs (
   historia TEXT,
   contato VARCHAR(100),
   localizacao VARCHAR(100),
-  documento_url VARCHAR(255), -- RF03: Comprovativo (Contrato Social/CNPJ)
+  documento_url VARCHAR(255), -- RF03: Caminho do arquivo de verificação
   FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
@@ -63,7 +63,7 @@ CREATE TABLE animais_adocao (
   porte ENUM('Pequeno', 'Médio', 'Grande', 'Não informado') DEFAULT 'Não informado',
   descricao TEXT,
   localizacao VARCHAR(100),
-  foto_url VARCHAR(255), -- RF05: Galeria de Fotos
+  foto_url VARCHAR(255), -- RF05: URL da imagem do animal
   data_desaparecimento DATE,
   ultima_localizacao VARCHAR(100),
   status ENUM('Disponivel', 'Em_Analise', 'Adotado', 'Perdido', 'Encontrado') DEFAULT 'Disponivel',
@@ -85,7 +85,7 @@ CREATE TABLE formularios_adocao (
   justificativa TEXT,
   data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   status ENUM('Enviado', 'Em_Analise', 'Aprovado', 'Rejeitado') DEFAULT 'Enviado',
-  documento_caminho VARCHAR(255), 
+  documento_caminho VARCHAR(255), -- RF15/16: Caminho do Termo de Adoção PDF
 
   FOREIGN KEY (adotante_id) REFERENCES adotantes(usuario_id),
   FOREIGN KEY (animal_id) REFERENCES animais_adocao(id) ON DELETE CASCADE
@@ -100,7 +100,7 @@ CREATE TABLE favoritos (
   FOREIGN KEY (animal_id) REFERENCES animais_adocao(id) ON DELETE CASCADE
 );
 
--- 6. SEGURANÇA E MODERAÇÃO (RF19, RF20)
+-- 6. SEGURANÇA E MODERAÇÃO (RF20)
 CREATE TABLE IF NOT EXISTS denuncias_usuarios (
   id INT AUTO_INCREMENT PRIMARY KEY,
   usuario_denunciado_id INT NOT NULL,
@@ -110,4 +110,16 @@ CREATE TABLE IF NOT EXISTS denuncias_usuarios (
   status ENUM('Pendente', 'Analisado') DEFAULT 'Pendente',
   FOREIGN KEY (usuario_denunciado_id) REFERENCES usuarios(id) ON DELETE CASCADE,
   FOREIGN KEY (denunciante_id) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+
+-- 7. SISTEMA DE NOTIFICAÇÕES (RF19, RF20 E FLUXO DE ADOÇÃO)
+CREATE TABLE IF NOT EXISTS notificacoes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT NOT NULL,
+  titulo VARCHAR(100) NOT NULL,
+  mensagem TEXT NOT NULL,
+  lida BOOLEAN DEFAULT FALSE,
+  tipo ENUM('SUCESSO', 'ALERTA', 'ERRO', 'INFORMATIVO') DEFAULT 'INFORMATIVO',
+  data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );

@@ -1,6 +1,7 @@
 import { AdminModel } from "../models/AdminModel.js";
 import { UsuarioModel } from "../models/UsuarioModel.js";
 import { AnimalModel } from "../models/AnimalModel.js";
+import { NotificacaoModel } from "../models/NotificacaoModel.js";
 
 /**
  * RF19: Listar todos os usuários para o painel administrativo.
@@ -17,7 +18,7 @@ export const getPainelGeral = async (req, res) => {
 
 /**
  * RF19: Bloquear ou Ativar Usuário com Justificativa.
- * O campo 'motivo' é obrigatório para bloqueios, garantindo auditoria.
+ * Além de atualizar o status, envia uma notificação ao utilizador.
  */
 export const moderarUsuario = async (req, res) => {
   try {
@@ -28,8 +29,21 @@ export const moderarUsuario = async (req, res) => {
       return res.status(400).json({ erro: "É obrigatório informar o motivo do bloqueio para fins de moderação." });
     }
 
-    await AdminModel.atualizarStatusComMotivo(id, acao, motivo || "Alteração manual pelo administrador");
-    res.json({ mensagem: `Status do usuário atualizado para ${acao} com sucesso.` });
+    const justificativa = motivo || "Alteração manual pelo administrador";
+    await AdminModel.atualizarStatusComMotivo(id, acao, justificativa);
+
+    // --- RF19: Sistema de Notificações ---
+    const titulo = acao === 'Bloqueado' ? "Sua conta foi suspensa" : "Atualização de Perfil";
+    const tipoNotif = acao === 'Ativo' ? 'SUCESSO' : (acao === 'Bloqueado' ? 'ERRO' : 'INFORMATIVO');
+    
+    await NotificacaoModel.criar(
+      id, 
+      titulo, 
+      `O status da sua conta foi alterado para: ${acao}. Motivo: ${justificativa}`,
+      tipoNotif
+    );
+
+    res.json({ mensagem: `Status do usuário atualizado para ${acao} e notificação enviada.` });
   } catch (err) {
     res.status(500).json({ erro: err.message });
   }
@@ -37,20 +51,34 @@ export const moderarUsuario = async (req, res) => {
 
 /**
  * RF20: Excluir Postagens Irregulares (Moderação de Conteúdo).
- * Permite que o Admin apague anúncios de animais que não condizem com as regras da plataforma.
+ * Notifica o dono do animal sobre a remoção da postagem.
  */
 export const moderarAnimal = async (req, res) => {
   try {
     const { id } = req.params;
+    const { justificativa } = req.body; // Recomendado enviar justificativa no corpo
     
-    // Verifica se o animal existe antes de tentar excluir
     const animal = await AnimalModel.buscarPorId(id);
     if (!animal) {
       return res.status(404).json({ erro: "Animal não encontrado ou já removido." });
     }
 
+    const donoId = animal.ong_id || animal.protetor_id;
+
+    // Remove o animal
     await AnimalModel.excluir(id);
-    res.json({ mensagem: "A postagem do animal foi removida permanentemente por violação das regras." });
+
+    // --- RF20: Notificar o dono sobre a remoção ---
+    if (donoId) {
+      await NotificacaoModel.criar(
+        donoId,
+        "Postagem Removida",
+        `O anúncio do animal "${animal.nome}" foi removido por violação das diretrizes. Motivo: ${justificativa || "Conteúdo irregular"}.`,
+        'ALERTA'
+      );
+    }
+
+    res.json({ mensagem: "A postagem do animal foi removida e o responsável notificado." });
   } catch (err) {
     res.status(500).json({ erro: err.message });
   }
@@ -58,22 +86,31 @@ export const moderarAnimal = async (req, res) => {
 
 /**
  * RF03: Aprovar cadastro de ONGs e Protetores.
- * Essencial para o seu teste, pois novos cadastros começam como 'Pendente'.
+ * Essencial para validar a documentação enviada via upload.
  */
 export const aprovarCadastroONG = async (req, res) => {
   try {
     const { id } = req.params;
-    const { decisao } = req.body; // Esperado: 'Ativo' ou 'Bloqueado'
+    const { decisao, motivo } = req.body; // Esperado: 'Ativo' ou 'Bloqueado'
 
     if (!['Ativo', 'Bloqueado'].includes(decisao)) {
       return res.status(400).json({ erro: "Decisão inválida. Use 'Ativo' para aprovar ou 'Bloqueado' para recusar." });
     }
 
-    const justificativa = decisao === 'Ativo' 
-      ? "Documentação revisada e aprovada." 
-      : "Documentação insuficiente ou inválida.";
+    const justificativa = motivo || (decisao === 'Ativo' 
+      ? "Sua documentação foi revisada e aprovada com sucesso!" 
+      : "Documentação insuficiente ou inválida.");
 
     await AdminModel.atualizarStatusComMotivo(id, decisao, justificativa);
+
+    // --- RF03/RF19: Notificação de Boas-vindas ou Recusa ---
+    await NotificacaoModel.criar(
+      id,
+      decisao === 'Ativo' ? "Bem-vindo à plataforma!" : "Problema na Verificação",
+      justificativa,
+      decisao === 'Ativo' ? 'SUCESSO' : 'ERRO'
+    );
+
     res.json({ mensagem: `O cadastro do usuário foi definido como: ${decisao}` });
   } catch (err) {
     res.status(500).json({ erro: err.message });
@@ -82,7 +119,6 @@ export const aprovarCadastroONG = async (req, res) => {
 
 /**
  * RF20: Listar denúncias de usuários pendentes.
- * Mostra quem denunciou quem e por qual motivo, permitindo a tomada de decisão do Admin.
  */
 export const listarDenunciasUsuarios = async (req, res) => {
   try {
