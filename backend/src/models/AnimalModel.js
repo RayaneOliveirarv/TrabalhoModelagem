@@ -1,7 +1,7 @@
 import db from "../config/db.js";
 
 export const AnimalModel = {
-  // RF04 e RF05 - Cadastrar Animal (Adoção ou Perdido) com suporte a Foto
+  // RF04 e RF05 - Cadastrar Animal com suporte a Foto e Categorias
   criar(dados) {
     const sql = `
       INSERT INTO animais_adocao
@@ -19,7 +19,7 @@ export const AnimalModel = {
           dados.porte || 'Não informado',
           dados.descricao,
           dados.localizacao,
-          dados.foto_url || null, // RF05: URL da foto do animal
+          dados.foto_url || null, // RF05: Caminho da imagem processada pelo Multer
           dados.ong_id || null,
           dados.protetor_id || null,
           dados.status || 'Disponivel',
@@ -35,18 +35,23 @@ export const AnimalModel = {
     });
   },
 
-  // RF06 - Busca Avançada com Filtros Dinâmicos
+  /**
+   * RF06 - Busca Avançada com Filtros Dinâmicos
+   * Constrói a query SQL baseada apenas nos filtros que o usuário preencher.
+   */
   buscarAvancada(filtros) {
+    // COALESCE(o.nome, p.nome) pega o primeiro nome não nulo encontrado entre as tabelas
     let sql = `
       SELECT a.*, 
              COALESCE(o.nome, p.nome) as dono_nome
       FROM animais_adocao a
       LEFT JOIN ongs o ON a.ong_id = o.usuario_id
       LEFT JOIN protetores_individuais p ON a.protetor_id = p.usuario_id
-      WHERE 1=1`;
+      WHERE 1=1`; // 'WHERE 1=1' facilita a concatenação de múltiplos 'AND'
     
     const valores = [];
 
+    // Adiciona condições dinamicamente
     if (filtros.categoria) {
       sql += ` AND a.categoria = ?`;
       valores.push(filtros.categoria);
@@ -60,6 +65,7 @@ export const AnimalModel = {
       valores.push(filtros.porte);
     }
     if (filtros.localizacao) {
+      // LIKE permite buscas parciais (ex: "Lisboa" encontra "Distrito de Lisboa")
       sql += ` AND a.localizacao LIKE ?`;
       valores.push(`%${filtros.localizacao}%`);
     }
@@ -74,6 +80,9 @@ export const AnimalModel = {
     });
   },
 
+  /**
+   * Busca detalhes de um animal e informações de contato do dono.
+   */
   buscarPorId(id) {
     const sql = `
       SELECT a.*, 
@@ -93,6 +102,7 @@ export const AnimalModel = {
     });
   },
 
+  // Atualiza o status (ex: de 'Disponivel' para 'Em_Analise' ou 'Adotado')
   atualizarStatus(id, status) {
     const sql = `UPDATE animais_adocao SET status = ? WHERE id = ?`;
     return new Promise((resolve, reject) => {
@@ -103,7 +113,7 @@ export const AnimalModel = {
     });
   },
 
-  // RF08 - Favoritos (Apenas Adotantes, validado no Controller)
+  // RF08 - MÉTODOS DE FAVORITOS
   favoritar(adotanteId, animalId) {
     const sql = `INSERT INTO favoritos (adotante_id, animal_id) VALUES (?, ?)`;
     return new Promise((resolve, reject) => {
@@ -138,11 +148,15 @@ export const AnimalModel = {
     });
   },
 
+  /**
+   * Atualização dinâmica de campos.
+   * Transforma as chaves de um objeto em uma string SET do SQL.
+   */
   atualizar(id, dados) {
-    // Permite atualizar foto_url e outros campos dinamicamente
     const campos = Object.keys(dados).map(key => `${key} = ?`).join(", ");
     const valores = [...Object.values(dados), id];
     const sql = `UPDATE animais_adocao SET ${campos} WHERE id = ?`;
+    
     return new Promise((resolve, reject) => {
       db.query(sql, valores, (err, result) => {
         if (err) reject(err);

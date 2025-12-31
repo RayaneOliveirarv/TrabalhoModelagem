@@ -1,13 +1,16 @@
+// Importação da camada de Serviço (lógica complexa) e do Model (acesso direto aos dados)
 import { AnimalService } from "../services/AnimalService.js";
 import { AnimalModel } from "../models/AnimalModel.js"; 
 import db from "../config/db.js";
 
 /**
- * Função auxiliar interna para verificar status e tipo do usuário.
- * Garante que usuários bloqueados ou inativos não realizem ações.
+ * FUNÇÃO AUXILIAR: Não é exportada.
+ * Serve para verificar no banco se o usuário está 'Ativo' ou 'Bloqueado'
+ * antes de permitir que ele faça qualquer alteração no sistema.
  */
 const obterInfoUsuario = async (id) => {
   if (!id) return null;
+  // Usa o db.promise() para permitir o uso de async/await em consultas manuais
   const [rows] = await db.promise().query(
     "SELECT status_conta, tipo FROM usuarios WHERE id = ?", 
     [id]
@@ -19,23 +22,26 @@ const obterInfoUsuario = async (id) => {
 export const cadastrarAnimal = async (req, res) => {
   try {
     const { ong_id, protetor_id } = req.body;
+    // O animal pode pertencer a uma ONG ou a um Protetor independente
     const usuarioId = ong_id || protetor_id;
 
     const usuario = await obterInfoUsuario(usuarioId);
 
-    // RF03/RF04: Verifica se a conta está ativa antes de permitir o cadastro
+    // Regra de Negócio: Se a conta não estiver 'Ativo', impede o cadastro
     if (!usuario || usuario.status_conta.toLowerCase() !== 'ativo') {
       return res.status(403).json({ 
         erro: "A tua conta ainda está pendente de aprovação ou está bloqueada. Não podes cadastrar animais." 
       });
     }
 
-    // RF05: Se o Multer processou um arquivo, salvamos o caminho relativo.
+    // RF05: Monta o objeto do animal. 
+    // Se o Multer enviou um arquivo (req.file), salvamos o caminho da imagem no banco.
     const dadosAnimal = {
       ...req.body,
       foto_url: req.file ? `uploads/animais/${req.file.filename}` : null
     };
 
+    // Delega a inserção para o Service
     const result = await AnimalService.cadastrar(dadosAnimal);
     
     res.status(201).json({
@@ -48,9 +54,10 @@ export const cadastrarAnimal = async (req, res) => {
   }
 };
 
-// RF06: Listagem com filtros dinâmicos (Espécie, Porte, etc.)
+// RF06: Listagem com filtros dinâmicos (Busca por Espécie, Porte, etc.)
 export const listarAnimais = async (req, res) => {
   try {
+    // req.query contém os parâmetros da URL (ex: ?especie=Cao&porte=Medio)
     const animais = await AnimalService.listarComFiltros(req.query);
     res.json(animais);
   } catch (err) {
@@ -69,13 +76,13 @@ export const buscarAnimalPorId = async (req, res) => {
 };
 
 /**
- * Atualização de Animal (RF20 / Edição pelo dono)
- * ATUALIZADO: Agora utiliza o AnimalService para validar a propriedade do animal
+ * RF20 / Edição: Atualização de dados do animal
+ * Verifica se o usuário que está tentando editar é realmente o dono do animal.
  */
 export const atualizarAnimal = async (req, res) => {
   try {
     const { id } = req.params;
-    const { usuario_id, ...outrosDados } = req.body; // Extraímos o usuario_id para validar a posse
+    const { usuario_id, ...outrosDados } = req.body; 
 
     if (!usuario_id) {
       return res.status(401).json({ erro: "É necessário informar o ID do usuário para editar." });
@@ -88,25 +95,24 @@ export const atualizarAnimal = async (req, res) => {
 
     const dadosAtualizados = { ...outrosDados };
     
-    // Se um novo arquivo de imagem for enviado, atualizamos o caminho
+    // Se uma nova foto foi enviada no upload, atualiza o campo foto_url
     if (req.file) {
       dadosAtualizados.foto_url = `uploads/animais/${req.file.filename}`;
     }
 
-    // Chamamos o SERVICE que agora faz a checagem se o usuario_id é dono do animal 'id'
+    // O Service valida internamente se o usuario_id tem permissão sobre este animal 'id'
     await AnimalService.atualizarDados(id, dadosAtualizados, usuario_id);
     
     res.json({ mensagem: "Informações do animal atualizadas com sucesso!" });
   } catch (err) {
-    // Se o erro for de permissão lançado pelo Service, retornamos 403
     const status = err.message.includes("permissão") ? 403 : 400;
     res.status(status).json({ erro: err.message });
   }
 };
 
 /**
- * Remoção de Animal (RF20 / Exclusão pelo dono)
- * ATUALIZADO: Agora utiliza o AnimalService para garantir que apenas o dono exclua
+ * Remoção de Animal
+ * Garante que apenas o dono (ou admin via Service) possa excluir o anúncio.
  */
 export const deletarAnimal = async (req, res) => {
   try {
@@ -122,7 +128,7 @@ export const deletarAnimal = async (req, res) => {
       return res.status(403).json({ erro: "Ação bloqueada: conta inativa ou bloqueada." });
     }
 
-    // Chamamos o SERVICE para validar a posse e excluir
+    // Chama o Service para validar a posse e realizar a exclusão
     await AnimalService.excluirAnimal(id, usuario_id);
     
     res.json({ mensagem: "Animal removido do sistema com sucesso." });
@@ -133,7 +139,7 @@ export const deletarAnimal = async (req, res) => {
 };
 
 // ==========================================
-// RF08: MÉTODOS DE FAVORITOS
+// RF08: MÉTODOS DE FAVORITOS (Interação do Adotante)
 // ==========================================
 
 export const favoritarAnimal = async (req, res) => {
@@ -145,6 +151,7 @@ export const favoritarAnimal = async (req, res) => {
       return res.status(404).json({ erro: "Usuário não encontrado." });
     }
 
+    // Regra de Negócio: Apenas ADOTANTES podem favoritar, ONGs/Protetores não.
     if (usuario.tipo !== 'ADOTANTE') {
       return res.status(403).json({ erro: "Apenas perfis de Adotantes podem favoritar animais." });
     }
@@ -181,6 +188,7 @@ export const desfavoritarAnimal = async (req, res) => {
     const { adotanteId, animalId } = req.params;
     const usuario = await obterInfoUsuario(adotanteId);
 
+    // Verifica se o usuário existe e não está bloqueado antes de permitir desfavoritar
     if (!usuario || usuario.status_conta.toLowerCase() === 'bloqueado') {
       return res.status(403).json({ erro: "Ação bloqueada: conta inexistente ou bloqueada." });
     }

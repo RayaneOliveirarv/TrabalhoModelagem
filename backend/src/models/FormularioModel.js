@@ -1,7 +1,12 @@
 import db from "../config/db.js";
 
+/**
+ * FormularioModel: Gerencia o ciclo de vida das intenções de adoção.
+ * Faz a ponte entre a tabela 'formularios_adocao' e as tabelas de suporte.
+ */
 export const FormularioModel = {
-  // RF10: Cria um novo formulário de intenção de adoção
+  
+  // RF10: Registra o interesse inicial de um adotante por um animal.
   criar(dados) {
     const sql = `
       INSERT INTO formularios_adocao
@@ -27,7 +32,7 @@ export const FormularioModel = {
     });
   },
 
-  // Busca um formulário específico por ID
+  // Busca simples para validações rápidas no Controller
   buscarPorId(id) {
     const sql = `SELECT * FROM formularios_adocao WHERE id = ?`;
     return new Promise((resolve, reject) => {
@@ -38,9 +43,12 @@ export const FormularioModel = {
     });
   },
 
-  // RF18: Listar formulários recebidos por uma ONG ou Protetor específico
+  /**
+   * RF18: Painel do Protetor/ONG.
+   * Lista quem quer adotar os animais que pertencem a este responsável.
+   * O JOIN aqui é essencial para mostrar nomes em vez de apenas IDs.
+   */
   listarPorDono(tipoResponsavel, donoId) {
-    // tipoResponsavel deve ser 'ong_id' ou 'protetor_id'
     const sql = `
       SELECT f.*, a.nome as animal_nome, ad.nome as adotante_nome
       FROM formularios_adocao f
@@ -57,7 +65,8 @@ export const FormularioModel = {
     });
   },
 
-  // RF12: Listar para o adotante acompanhar suas solicitações
+  // RF12: Painel do Adotante.
+  // Permite que o usuário veja a lista de pets que ele tentou adotar e o status atual.
   listarPorAdotante(adotanteId) {
     const sql = `
       SELECT f.*, a.nome as animal_nome 
@@ -74,7 +83,7 @@ export const FormularioModel = {
     });
   },
 
-  // RF18: Atualizar status do formulário (Aprovado/Rejeitado/Em_Analise)
+  // Altera o estado do processo (ex: de 'Enviado' para 'Aprovado')
   atualizarStatus(id, status) {
     const sql = `UPDATE formularios_adocao SET status = ? WHERE id = ?`;
     return new Promise((resolve, reject) => {
@@ -85,8 +94,11 @@ export const FormularioModel = {
     });
   },
 
-  // RF15: Busca dados completos para preencher o PDF (Termo de Adoção)
-  // Usa COALESCE para pegar o nome/contato de quem for o dono (ONG ou Protetor)
+  /**
+   * RF15: A "Query de Ouro" para o Documento PDF.
+   * Este método reúne dados de 5 tabelas diferentes (ou contextos) em um único objeto.
+   * O uso do COALESCE resolve o problema de o animal pertencer a uma ONG ou Protetor.
+   */
   buscarDadosParaPdf(id) {
     const sql = `
       SELECT 
@@ -112,7 +124,7 @@ export const FormularioModel = {
     });
   },
 
-  // Salva o caminho do arquivo PDF gerado no servidor
+  // Registra o link final do documento gerado no disco
   salvarCaminhoDocumento(formularioId, caminho) {
     const sql = `UPDATE formularios_adocao SET documento_caminho = ? WHERE id = ?`;
     return new Promise((resolve, reject) => {

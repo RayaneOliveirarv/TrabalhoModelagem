@@ -1,7 +1,11 @@
 import db from "../config/db.js";
 
+/**
+ * UsuarioModel: Gerencia a autenticação, segurança e integridade das contas.
+ */
 export const UsuarioModel = {
-  // Cria um novo usuário
+  
+  // RF01: Cria o registro básico de acesso (Login e Senha)
   criar(email, senha, tipo) {
     const sql = `
       INSERT INTO usuarios (email, senha, tipo)
@@ -15,7 +19,7 @@ export const UsuarioModel = {
     });
   },
 
-  // Busca um usuário pelo email
+  // Essencial para o processo de Login e para evitar emails duplicados no cadastro
   buscarPorEmail(email) {
     const sql = `SELECT * FROM usuarios WHERE email = ?`;
     return new Promise((resolve, reject) => {
@@ -26,7 +30,7 @@ export const UsuarioModel = {
     });
   },
 
-  // Atualiza a senha de um usuário
+  // Utilizado em fluxos de "Esqueci minha senha" ou alteração de perfil
   atualizarSenha(id, novaSenha) {
     const sql = `UPDATE usuarios SET senha = ? WHERE id = ?`;
     return new Promise((resolve, reject) => {
@@ -37,11 +41,20 @@ export const UsuarioModel = {
     });
   },
 
-  // Atualiza detalhes específicos em uma tabela (adotantes, ongs ou protetores)
+  /**
+   * MÉTODO DINÂMICO: Atualiza detalhes em tabelas específicas.
+   * @param {string} tabela - Nome da tabela (adotantes, ongs, etc)
+   * @param {object} dados - Objeto contendo {coluna: valor}
+   */
   atualizarDetalhes(tabela, dados, usuarioId) {
+    // Transforma o objeto {nome: "João"} em "nome = ?"
     const campos = Object.keys(dados).map(key => `${key} = ?`).join(", ");
     const valores = [...Object.values(dados), usuarioId];
+    
+    // IMPORTANTE: Embora os valores sejam protegidos por '?', 
+    // o nome da tabela deve ser validado no Service para evitar injeção.
     const sql = `UPDATE ${tabela} SET ${campos} WHERE usuario_id = ?`;
+    
     return new Promise((resolve, reject) => {
       db.query(sql, valores, (err, result) => {
         if (err) reject(err);
@@ -50,7 +63,7 @@ export const UsuarioModel = {
     });
   },
 
-  // Exclui um usuário pelo id
+  // RF02: Exclusão de conta (Atenção: o banco usa ON DELETE CASCADE no seu schema)
   excluir(id) {
     const sql = `DELETE FROM usuarios WHERE id = ?`;
     return new Promise((resolve, reject) => {
@@ -61,7 +74,10 @@ export const UsuarioModel = {
     });
   },
 
-  // Atualiza o status de ativação de um usuário ('Pendente', 'Ativo', 'Bloqueado')
+  /**
+   * RF19: Controle de Moderação.
+   * Altera se o usuário pode ou não logar no sistema.
+   */
   atualizarStatusAtivacao(id, status) {
     const sql = `UPDATE usuarios SET status_conta = ? WHERE id = ?`;
     return new Promise((resolve, reject) => {
