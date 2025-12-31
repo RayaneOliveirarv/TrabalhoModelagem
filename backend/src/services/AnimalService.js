@@ -5,12 +5,18 @@ export const AnimalService = {
     if (!dados.ong_id && !dados.protetor_id) {
       throw new Error("Informe ong_id ou protetor_id");
     }
+    
+    // Validação de Porte (RF06)
+    const portesValidos = ['Pequeno', 'Médio', 'Grande', 'Não informado'];
+    if (dados.porte && !portesValidos.includes(dados.porte)) {
+      throw new Error("Porte inválido. Escolha: Pequeno, Médio ou Grande.");
+    }
 
     return AnimalModel.criar(dados);
   },
 
-  listarDisponiveis() {
-    return AnimalModel.listarDisponiveis();
+  listarComFiltros(filtros) {
+    return AnimalModel.buscarAvancada(filtros);
   },
 
   buscarPorId(id) {
@@ -19,9 +25,5 @@ export const AnimalService = {
 
   atualizarStatus(id, status) {
     return AnimalModel.atualizarStatus(id, status);
-  },
-
-  listarAdotadosPorAdotante(adotanteId) {
-    return AnimalModel.listarAdotadosPorAdotante(adotanteId);
   }
 };

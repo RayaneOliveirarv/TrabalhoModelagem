@@ -8,17 +8,16 @@ import {
 
 const router = express.Router();
 
-// RF19: Gerenciar usuários (AD2 no diagrama)
+// Painel de Administração
 router.get("/usuarios", getPainelGeral); 
 
-// RF03: Aprovar cadastro de ONG (AD3 no diagrama)
-// ATENÇÃO: Se aqui estiver "/admin/aprovar-ong", a URL no Postman teria que ser /admin/admin/aprovar-ong
+// RF19: Bloquear usuário enviando { "acao": "Bloqueado", "motivo": "Texto aqui" }
+router.put("/usuario/moderar/:id", moderarUsuario); 
+
+// RF03: Aprovar ONG
 router.put("/aprovar-ong/:id", aprovarCadastroONG); 
 
-// RF19: Bloquear/Excluir usuários (AD3)
-router.delete("/usuario/:id", moderarUsuario);
-
-// RF20: Moderar conteúdos/Excluir postagens (AD6)
+// RF20: Remover postagem irregular
 router.delete("/animal/:id", moderarAnimal);
 
 export default router;

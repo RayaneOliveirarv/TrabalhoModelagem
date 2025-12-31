@@ -4,21 +4,24 @@ import {
   listarAnimais, 
   buscarAnimalPorId,
   atualizarAnimal,
-  deletarAnimal 
+  deletarAnimal,
+  favoritarAnimal,
+  listarFavoritos,
+  desfavoritarAnimal
 } from "../controllers/AnimalController.js";
-import { favoritarAnimal, listarFavoritos } from "../controllers/FavoritoController.js";
 
 const router = express.Router();
 
-// Rotas baseadas em /animais
-router.post("/", cadastrarAnimal);         // POST http://localhost:3000/animais/
-router.get("/", listarAnimais);           // GET  http://localhost:3000/animais/
-router.get("/:id", buscarAnimalPorId);    // GET  http://localhost:3000/animais/1
-router.put("/:id", atualizarAnimal);      // PUT  http://localhost:3000/animais/1
-router.delete("/:id", deletarAnimal);   // DELETE http://localhost:3000/animais/1
+// Rotas de Animais
+router.post("/cadastrar", cadastrarAnimal);
+router.get("/", listarAnimais); 
+router.get("/:id", buscarAnimalPorId);
+router.put("/:id", atualizarAnimal);
+router.delete("/:id", deletarAnimal);
 
-// Rotas de favoritos (sub-recurso)
-router.post("/favoritos", favoritarAnimal);             // POST http://localhost:3000/animais/favoritos
-router.get("/favoritos/:adotanteId", listarFavoritos);  // GET  http://localhost:3000/animais/favoritos/1
+// Rotas de Favoritos
+router.post("/favoritos", favoritarAnimal);
+router.get("/favoritos/:adotanteId", listarFavoritos);
+router.delete("/favoritos/:adotanteId/:animalId", desfavoritarAnimal);
 
 export default router;

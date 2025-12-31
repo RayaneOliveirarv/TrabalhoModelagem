@@ -8,9 +8,9 @@ import {
 
 const router = express.Router();
 
-router.post("/enviar", enviarFormulario);
-router.put("/decidir/:id", decidirFormulario); 
-router.get("/pendentes", listarSolicitacoesProtetor);
-router.get("/status/:adotanteId", acompanharStatusAdotante);
+router.post("/enviar", enviarFormulario);               // RF10 - Enviar proposta
+router.put("/decidir/:id", decidirFormulario);          // RF18 - Aprovar/Recusar
+router.get("/pendentes", listarSolicitacoesProtetor);   // Ver solicitações recebidas
+router.get("/status/:adotanteId", acompanharStatusAdotante); // RF12 - Adotante vê status
 
 export default router;

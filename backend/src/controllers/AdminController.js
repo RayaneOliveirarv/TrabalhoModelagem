@@ -2,7 +2,6 @@ import { AdminModel } from "../models/AdminModel.js";
 import { UsuarioModel } from "../models/UsuarioModel.js";
 import { AnimalModel } from "../models/AnimalModel.js";
 
-// RF19: Gerenciar usuários e AD2: Gerenciar Usuários
 export const getPainelGeral = async (req, res) => {
   try {
     const usuarios = await AdminModel.listarTodosUsuarios();
@@ -12,38 +11,41 @@ export const getPainelGeral = async (req, res) => {
   }
 };
 
-// RF19 e AD3: Bloquear / Excluir Usuários
+// RF19: Bloquear Usuário com Motivo
 export const moderarUsuario = async (req, res) => {
   try {
     const { id } = req.params;
-    await UsuarioModel.excluir(id);
-    res.json({ mensagem: "Usuário removido do sistema pelo administrador." });
+    const { acao, motivo } = req.body; // acao: 'Bloqueado' ou 'Ativo'
+
+    if (acao === 'Bloqueado' && !motivo) {
+      return res.status(400).json({ erro: "É obrigatório informar o motivo do bloqueio." });
+    }
+
+    await AdminModel.atualizarStatusComMotivo(id, acao, motivo);
+    res.json({ mensagem: `Status do usuário atualizado para ${acao}.` });
   } catch (err) {
     res.status(500).json({ erro: err.message });
   }
 };
 
-// RF20 e AD6: Excluir Postagens Irregulares
+// RF20: Excluir Postagens Irregulares
 export const moderarAnimal = async (req, res) => {
   try {
     const { id } = req.params;
     await AnimalModel.excluir(id);
-    res.json({ mensagem: "Postagem de animal removida por irregularidade." });
+    res.json({ mensagem: "Postagem removida por violação das regras." });
   } catch (err) {
     res.status(500).json({ erro: err.message });
   }
 };
 
-// RF03: Permitir o cadastro de ONGs e AD5: Aprovar / Reprovar Divulgação
+// RF03: Aprovar ONG
 export const aprovarCadastroONG = async (req, res) => {
   try {
     const { id } = req.params;
-    const { decisao } = req.body; // No Postman envie: {"decisao": "Ativo"} ou "Recusado"
-    
-    // Sincronizado com a função atualizarStatusAtivacao do AdminModel
-    await AdminModel.atualizarStatusAtivacao(id, decisao);
-    
-    res.json({ mensagem: `Status da conta ${id} atualizado para ${decisao} com sucesso!` });
+    const { decisao } = req.body; // 'Ativo' ou 'Bloqueado'
+    await AdminModel.atualizarStatusComMotivo(id, decisao, "Aprovação de cadastro de ONG");
+    res.json({ mensagem: `Cadastro de ONG: ${decisao}` });
   } catch (err) {
     res.status(500).json({ erro: err.message });
   }
