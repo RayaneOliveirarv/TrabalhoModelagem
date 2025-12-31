@@ -70,6 +70,20 @@ div.dual_column{
 div.Ong_Register{
   width: 50%;
 }
+div.Docker{
+  background-color: #fff;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items:center;
+  padding:10px;
+  border-radius: 2em 
+}
+div.Docker_item{
+  background-color: #d9d9d9;
+  color:darkgray;
+
+}
 /*fim divs*/
 
 /*inputs*/
@@ -93,6 +107,11 @@ textarea.Textarea_p{
 img.round_image{
   width: 15%;
   border-radius: 50%;
+}
+img.Docker_icon{
+  width: 5%;
+  margin: auto;
+  padding: 10px;
 }
 /*fim images*/
 
@@ -136,6 +155,11 @@ button.submit_btn{
 }
 .blue_button{
   background-color: #c3ebff;
+}
+.white_box{
+  background-color: #fff;
+  border-radius: 2em;
+  padding:5px
 }
 .center{
   display: flex;
