@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap');
+
+.navbar-feed {
+  width: 100%;
+  max-width: 600px;
+  background: #dbdbdb;
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0;
+  padding: 12px 8px;
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  margin: 0 auto;
+  box-shadow: 0 2px 12px #e0e0e044;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.navbar-feed-item {
+  background: none;
+  border: none;
+  border-radius: 16px;
+  padding: 12px 22px;
+  font-size: 1.13rem;
+  font-weight: 700;
+  color: #222;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  box-shadow: none;
+  margin: 0 2px;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.navbar-feed-item.active {
+  background: #fff;
+  color: #222;
+  box-shadow: 0 2px 8px #f8bbd044;
+  z-index: 1;
+  font-weight: 900;
+}
+
+.navbar-feed-item:not(.active):hover {
+  background: #fce4ec;
+  color: #ab47bc;
+}
+
+@media (max-width: 900px) {
+  .navbar-feed {
+    max-width: 98vw;
+    padding: 7px 2px;
+    border-radius: 16px;
+  }
+  .navbar-feed-item {
+    padding: 8px 8px;
+    font-size: 1rem;
+    border-radius: 8px;
+    max-width: 90px;
+  }
+}
