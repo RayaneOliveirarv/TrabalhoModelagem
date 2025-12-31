@@ -1,6 +1,8 @@
 -- ==========================================================
--- SCHEMA FINAL - 100% ALINHADO COM REQUISITOS (RF01 - RF20)
+-- SCHEMA FINAL ATUALIZADO - VERSÃO CORRIGIDA PARA O POSTMAN
+-- ALINHADO COM FORMULARIO_MODEL (EXPERIENCIA E AMBIENTE)
 -- ==========================================================
+
 CREATE DATABASE IF NOT EXISTS sistema_adocao;
 USE sistema_adocao;
 
@@ -11,7 +13,7 @@ CREATE TABLE usuarios (
   senha VARCHAR(100) NOT NULL,
   tipo ENUM('ADOTANTE', 'PROTETOR', 'ONG', 'ADMIN') NOT NULL,
   status_conta ENUM('Pendente', 'Ativo', 'Bloqueado') DEFAULT 'Pendente',
-  motivo_status TEXT -- ADICIONADO: Para o RF19 (Justificativa de bloqueio)
+  motivo_status TEXT -- RF19: Justificativa de bloqueio/ativação
 );
 
 CREATE TABLE administradores (
@@ -55,9 +57,10 @@ CREATE TABLE animais_adocao (
   nome VARCHAR(100),
   idade VARCHAR(50), 
   especie VARCHAR(50),
-  porte ENUM('Pequeno', 'Médio', 'Grande', 'Não informado') DEFAULT 'Não informado', -- ADICIONADO: Para RF06
+  porte ENUM('Pequeno', 'Médio', 'Grande', 'Não informado') DEFAULT 'Não informado',
   descricao TEXT,
   localizacao VARCHAR(100),
+  foto_url VARCHAR(255), -- RF05: Galeria de Fotos
   data_desaparecimento DATE,
   ultima_localizacao VARCHAR(100),
   status ENUM('Disponivel', 'Em_Analise', 'Adotado', 'Perdido', 'Encontrado') DEFAULT 'Disponivel',
@@ -69,13 +72,14 @@ CREATE TABLE animais_adocao (
   FOREIGN KEY (protetor_id) REFERENCES protetores_individuais(usuario_id) ON DELETE SET NULL
 );
 
--- 4. PROCESSOS E FORMULÁRIOS (RF10, RF12, RF18)
+-- 4. PROCESSOS E FORMULÁRIOS (RF10, RF12, RF18) - CORRIGIDO
+-- Alterado dados_adotante JSON para colunas TEXT para aceitar os dados do Postman
 CREATE TABLE formularios_adocao (
   id INT AUTO_INCREMENT PRIMARY KEY,
   adotante_id INT NOT NULL,
   animal_id INT NOT NULL,
-  experiencia TEXT,
-  ambiente TEXT,
+  experiencia TEXT NOT NULL, -- Corrigido: Agora o banco reconhece a coluna
+  ambiente TEXT NOT NULL,    -- Corrigido: Agora o banco reconhece a coluna
   justificativa TEXT,
   data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   status ENUM('Enviado', 'Em_Analise', 'Aprovado', 'Rejeitado') DEFAULT 'Enviado',
@@ -94,7 +98,7 @@ CREATE TABLE favoritos (
   FOREIGN KEY (animal_id) REFERENCES animais_adocao(id) ON DELETE CASCADE
 );
 
--- RF19/RF20: Denúncias de perfis de utilizadores (Substitui a de animais)
+-- 6. SEGURANÇA E MODERAÇÃO (RF19, RF20)
 CREATE TABLE IF NOT EXISTS denuncias_usuarios (
   id INT AUTO_INCREMENT PRIMARY KEY,
   usuario_denunciado_id INT NOT NULL,

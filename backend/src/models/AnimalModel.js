@@ -1,12 +1,12 @@
 import db from "../config/db.js";
 
 export const AnimalModel = {
-  // P3 - Cadastrar Animal (Adoção ou Perdido)
+  // RF04 e RF05 - Cadastrar Animal (Adoção ou Perdido) com suporte a Foto
   criar(dados) {
     const sql = `
       INSERT INTO animais_adocao
-      (nome, idade, especie, porte, descricao, localizacao, ong_id, protetor_id, status, categoria, data_desaparecimento, ultima_localizacao)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (nome, idade, especie, porte, descricao, localizacao, foto_url, ong_id, protetor_id, status, categoria, data_desaparecimento, ultima_localizacao)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     return new Promise((resolve, reject) => {
@@ -19,6 +19,7 @@ export const AnimalModel = {
           dados.porte || 'Não informado',
           dados.descricao,
           dados.localizacao,
+          dados.foto_url || null, // RF05: URL da foto do animal
           dados.ong_id || null,
           dados.protetor_id || null,
           dados.status || 'Disponivel',
@@ -102,7 +103,7 @@ export const AnimalModel = {
     });
   },
 
-  // Favoritos
+  // RF08 - Favoritos (Apenas Adotantes, validado no Controller)
   favoritar(adotanteId, animalId) {
     const sql = `INSERT INTO favoritos (adotante_id, animal_id) VALUES (?, ?)`;
     return new Promise((resolve, reject) => {
@@ -138,6 +139,7 @@ export const AnimalModel = {
   },
 
   atualizar(id, dados) {
+    // Permite atualizar foto_url e outros campos dinamicamente
     const campos = Object.keys(dados).map(key => `${key} = ?`).join(", ");
     const valores = [...Object.values(dados), id];
     const sql = `UPDATE animais_adocao SET ${campos} WHERE id = ?`;
