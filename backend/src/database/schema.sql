@@ -94,14 +94,14 @@ CREATE TABLE favoritos (
   FOREIGN KEY (animal_id) REFERENCES animais_adocao(id) ON DELETE CASCADE
 );
 
--- 6. DENÚNCIAS (ADICIONADO: Para RF20 - Moderação de conteúdo)
-CREATE TABLE denuncias (
+-- RF19/RF20: Denúncias de perfis de utilizadores (Substitui a de animais)
+CREATE TABLE IF NOT EXISTS denuncias_usuarios (
   id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_denunciado_id INT NOT NULL,
   denunciante_id INT NOT NULL,
-  animal_id INT NOT NULL,
   motivo TEXT NOT NULL,
   data_denuncia TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  status ENUM('Pendente', 'Analisada') DEFAULT 'Pendente',
-  FOREIGN KEY (denunciante_id) REFERENCES usuarios(id),
-  FOREIGN KEY (animal_id) REFERENCES animais_adocao(id) ON DELETE CASCADE
+  status ENUM('Pendente', 'Analisado') DEFAULT 'Pendente',
+  FOREIGN KEY (usuario_denunciado_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+  FOREIGN KEY (denunciante_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );

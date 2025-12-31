@@ -2,6 +2,7 @@ import { AdminModel } from "../models/AdminModel.js";
 import { UsuarioModel } from "../models/UsuarioModel.js";
 import { AnimalModel } from "../models/AnimalModel.js";
 
+// RF19: Listar todos os usuários para o painel
 export const getPainelGeral = async (req, res) => {
   try {
     const usuarios = await AdminModel.listarTodosUsuarios();
@@ -11,7 +12,7 @@ export const getPainelGeral = async (req, res) => {
   }
 };
 
-// RF19: Bloquear Usuário com Motivo
+// RF19: Bloquear Usuário com Motivo Justificado
 export const moderarUsuario = async (req, res) => {
   try {
     const { id } = req.params;
@@ -28,7 +29,7 @@ export const moderarUsuario = async (req, res) => {
   }
 };
 
-// RF20: Excluir Postagens Irregulares
+// RF20: Excluir Postagens Irregulares (Moderação de Conteúdo)
 export const moderarAnimal = async (req, res) => {
   try {
     const { id } = req.params;
@@ -39,13 +40,23 @@ export const moderarAnimal = async (req, res) => {
   }
 };
 
-// RF03: Aprovar ONG
+// RF03: Aprovar cadastro de ONGs
 export const aprovarCadastroONG = async (req, res) => {
   try {
     const { id } = req.params;
     const { decisao } = req.body; // 'Ativo' ou 'Bloqueado'
     await AdminModel.atualizarStatusComMotivo(id, decisao, "Aprovação de cadastro de ONG");
     res.json({ mensagem: `Cadastro de ONG: ${decisao}` });
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
+  }
+};
+
+// RF20: Listar denúncias de usuários pendentes para o Admin
+export const listarDenunciasUsuarios = async (req, res) => {
+  try {
+    const denuncias = await AdminModel.listarDenunciasUsuarios();
+    res.json(denuncias);
   } catch (err) {
     res.status(500).json({ erro: err.message });
   }

@@ -2,17 +2,23 @@ import { AnimalService } from "../services/AnimalService.js";
 import { AnimalModel } from "../models/AnimalModel.js"; 
 import db from "../config/db.js";
 
+// Função auxiliar interna para verificar se um utilizador está ativo
+const verificarUsuarioAtivo = async (id) => {
+  if (!id) return false;
+  const [rows] = await db.promise().query(
+    "SELECT status_conta FROM usuarios WHERE id = ?", 
+    [id]
+  );
+  return rows[0] && rows[0].status_conta.toLowerCase() === 'ativo';
+};
+
 export const cadastrarAnimal = async (req, res) => {
   try {
     const { ong_id, protetor_id } = req.body;
     const usuarioId = ong_id || protetor_id;
 
     // RF03/RF04: Verifica se a conta está ativa antes de permitir o cadastro
-    const [usuarios] = await db.promise().query(
-      "SELECT status_conta FROM usuarios WHERE id = ?", [usuarioId]
-    );
-
-    if (!usuarios[0] || usuarios[0].status_conta.toLowerCase() !== 'ativo') {
+    if (!(await verificarUsuarioAtivo(usuarioId))) {
       return res.status(403).json({ 
         erro: "A tua conta ainda está pendente de aprovação ou está bloqueada." 
       });
@@ -50,6 +56,12 @@ export const buscarAnimalPorId = async (req, res) => {
 
 export const atualizarAnimal = async (req, res) => {
   try {
+    const { usuario_id } = req.body; // ID de quem está a tentar editar
+
+    if (!(await verificarUsuarioAtivo(usuario_id))) {
+      return res.status(403).json({ erro: "Ação bloqueada: conta inativa ou bloqueada." });
+    }
+
     await AnimalModel.atualizar(req.params.id, req.body);
     res.json({ mensagem: "Informações atualizadas com sucesso!" });
   } catch (err) {
@@ -59,6 +71,12 @@ export const atualizarAnimal = async (req, res) => {
 
 export const deletarAnimal = async (req, res) => {
   try {
+    const { usuario_id } = req.body; // ID de quem está a tentar apagar
+
+    if (!(await verificarUsuarioAtivo(usuario_id))) {
+      return res.status(403).json({ erro: "Ação bloqueada: conta inativa ou bloqueada." });
+    }
+
     await AnimalModel.excluir(req.params.id);
     res.json({ mensagem: "Animal removido do sistema." });
   } catch (err) {
@@ -70,6 +88,11 @@ export const deletarAnimal = async (req, res) => {
 export const favoritarAnimal = async (req, res) => {
   try {
     const { adotante_id, animal_id } = req.body;
+
+    if (!(await verificarUsuarioAtivo(adotante_id))) {
+      return res.status(403).json({ erro: "Ação bloqueada: a tua conta não está ativa." });
+    }
+
     await AnimalModel.favoritar(adotante_id, animal_id);
     res.status(201).json({ mensagem: "Adicionado aos favoritos" });
   } catch (err) {
@@ -89,6 +112,11 @@ export const listarFavoritos = async (req, res) => {
 export const desfavoritarAnimal = async (req, res) => {
   try {
     const { adotanteId, animalId } = req.params;
+
+    if (!(await verificarUsuarioAtivo(adotanteId))) {
+      return res.status(403).json({ erro: "Ação bloqueada: a tua conta não está ativa." });
+    }
+
     await AnimalModel.desfavoritar(adotanteId, animalId);
     res.json({ mensagem: "Removido dos favoritos" });
   } catch (err) {
