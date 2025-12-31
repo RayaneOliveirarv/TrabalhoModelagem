@@ -60,11 +60,21 @@ export const AnimalService = {
     return AnimalModel.atualizarStatus(id, status);
   },
 
-  // RF20: Moderação e Atualização Geral
-  async atualizarDados(id, dados) {
+  /**
+   * RF20: Moderação e Atualização Geral
+   * ATUALIZADO: Agora verifica se o usuarioLogadoId é o dono do animal antes de editar
+   */
+  async atualizarDados(id, dados, usuarioLogadoId) {
     const animalExistente = await AnimalModel.buscarPorId(id);
+    
     if (!animalExistente) {
       throw new Error("Impossível atualizar: animal inexistente.");
+    }
+
+    // Validação de Propriedade: Verifica se quem solicita é a ONG ou Protetor do animal
+    const donoId = animalExistente.ong_id || animalExistente.protetor_id;
+    if (donoId !== parseInt(usuarioLogadoId)) {
+      throw new Error("Acesso negado: Você não tem permissão para editar este animal.");
     }
 
     // Se o porte estiver sendo atualizado, validamos novamente
@@ -78,12 +88,23 @@ export const AnimalService = {
     return AnimalModel.atualizar(id, dados);
   },
 
-  // Exclusão (Moderação RF20)
-  async excluirAnimal(id) {
+  /**
+   * Exclusão (Moderação RF20)
+   * ATUALIZADO: Agora verifica se o usuarioLogadoId é o dono antes de excluir
+   */
+  async excluirAnimal(id, usuarioLogadoId) {
     const animal = await AnimalModel.buscarPorId(id);
+    
     if (!animal) {
       throw new Error("Animal já não existe no sistema.");
     }
+
+    // Validação de Propriedade: Apenas o dono pode excluir seu post
+    const donoId = animal.ong_id || animal.protetor_id;
+    if (donoId !== parseInt(usuarioLogadoId)) {
+        throw new Error("Acesso negado: Você não tem permissão para excluir este animal.");
+    }
+
     return AnimalModel.excluir(id);
   }
 };
