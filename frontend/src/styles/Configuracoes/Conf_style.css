@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap');
+*{
+  font-family: "Poppins";
+}
+/*divs*/
+div.Main_Content{
+  min-height: 100vh;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(120deg, #f8fafc 0%, #e0f7fa 50%, #fce4ec 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  animation: bg-move 12s ease-in-out infinite alternate;
+}
+div.screen_selector{
+    margin: 2em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 20%;
+    background-color: lightgray;
+    padding: 1.2vw;
+    border-radius: 1em;
+    align-self: flex-start;
+}
+div.screen{
+    width:  85vw;
+    height: 50vh;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+div.Perfil{
+    padding: 5%;
+    border-radius: 2em;
+    background-color: #fff6f6;
+}
+div.Privacidade{
+  padding: 1em;
+  border-radius: 1em;
+}
+div.row{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+div.Content{
+  padding: 2em;
+  border-radius: 2em;
+}
+/*fim divs*/
+/*buttons*/
+button.submit_btn{
+  background-color: black;
+  color: #fff;
+  border-radius: 2em;
+  padding: 1em;
+  width: 15%;
+  height: 15%;
+  margin-top: 0.5em;
+}
+button:hover{
+  cursor:pointer;
+  background-color:gray ;
+}
+button:active{
+  background-color: #fff;
+  color: #000;
+}
+/*fim buttons*/
+/*inputs*/
+input.Input_p{
+  border-radius: 10px;
+  padding: 10px;
+  width: 100%;
+  background-color: #bdbdbd;
+}
+/*fim inputs*/
+/*Auxiliares*/
+.screen_item{
+    border: none;
+    border-radius: 1em;
+    padding: 0.3em;
+    font-weight: bold;
+    font-family: "Poppins";
+    background-color: lightgray;
+    width: 100%;
+}
+.screen_item:hover{
+    background-color: #fff;
+}
+.screen_item.active{
+    background-color: #fff;
+}
+
+.thin_border{
+  border: 1px solid #ccc;
+}
+.fade{
+  opacity: 0.5;
+}
