@@ -1,38 +1,41 @@
-export default function Perfil(){
+const Perfil: React.FC = ()=>{
 
     return(
-        <div className="Perfil">
+        <div className="conf-Perfil">
             <p>Informações Pessoais</p>
-            <div className="Content">
-                <div className="Input_Container">
+            <div className="conf-Content">
+                <div className="conf-row">
+                    <div className="conf-Input_Container">
                     <p><b>Nome:</b></p>
-                    <input type="text" className="Input_p thin_border" id="" />
+                    <input type="text" className="conf-Input_p conf-thin_border" id="" style={{width:"100%"}}/>
                 </div>
-                <div className="Input_Container">
+                <div className="conf-Input_Container">
                     <p><b>Sobrenome:</b></p>
-                    <input type="text" className="Input_p thin_border" id="" />
+                    <input type="text" className="conf-Input_p conf-thin_border" id="" style={{width:"100%"}}/>
                 </div>
-                <div className="Input_Container">
+                </div>
+                <div className="conf-Input_Container">
                     <p><b>Email:</b></p>
-                    <input type="email" className="Input_p thin_border" id="" />
+                    <input type="email" className="conf-Input_p conf-thin_border" id=""/>
                 </div>
-                <div className="Input_Container">
+                <div className="conf-Input_Container">
                     <p><b>Telefone:</b></p>
-                    <input type="text" className="Input_p thin_border" id="" />
+                    <input type="text" className="conf-Input_p conf-thin_border" id="" />
                 </div>
 
-                <div className="row">
-                    <div className="Input_Container">
+                <div className="conf-row">
+                    <div className="conf-Input_Container">
                         <p><b>Cidade:</b></p>
-                        <input type="text" className="Input_p thin_border" style={{width:"38vw"}}/>
+                        <input type="text" className="conf-Input_p conf-thin_border"/>
                     </div>
-                    <div className="Input_Container">
+                    <div className="conf-Input_Container">
                         <p><b>Estado</b></p>
-                        <input type="text" className="Input_p thin_border" style={{width:"38vw"}}/>
+                        <input type="text" className="conf-Input_p conf-thin_border"/>
                     </div>
                 </div>
             </div>
-            <button className="submit_btn">Salvar</button>
+            <button className="conf-submit_btn">Salvar</button>
         </div>
     )
 }
+export default Perfil;

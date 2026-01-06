@@ -24,11 +24,11 @@ export default function Configuracoes(){
 
     const screen_selector = ()=>{
         return(
-            <div className="screen_selector">
+            <div className="conf-screen_selector">
             {Screens.map(screen => (
                 <button
                 key={screen.name}
-                className={`screen_item${active_Screen === screen.name ? " active" : ""}`}
+                className={`conf-screen_item${active_Screen === screen.name ? " active" : ""}`}
                 onClick={() => choose_screen(screen.name)}
                 >
                 {screen.name}
@@ -39,13 +39,11 @@ export default function Configuracoes(){
     }
 
     return(
-        <div className="Configuration_Container">
-            <div className="top">
+        <div className="conf-Configuration_Container">
+            <div className="conf-Main_Content">
                 <NavbarPrincipal/>
-            </div>
-            <div className="Main_Content">
                 {screen_selector()}
-                <div className="screen">
+                <div className="conf-screen">
                     {screen_element}
                 </div>
             </div>

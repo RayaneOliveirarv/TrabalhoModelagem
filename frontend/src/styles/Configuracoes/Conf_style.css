@@ -3,7 +3,7 @@
   font-family: "Poppins";
 }
 /*divs*/
-div.Main_Content{
+div.conf-Main_Content{
   min-height: 100vh;
   width: 100vw;
   height: 100vh;
@@ -15,10 +15,9 @@ div.Main_Content{
   padding: 0;
   box-sizing: border-box;
   overflow-x: hidden;
-  overflow-y: auto;
   animation: bg-move 12s ease-in-out infinite alternate;
 }
-div.screen_selector{
+div.conf-screen_selector{
     margin: 2em;
     display: flex;
     flex-direction: row;
@@ -30,40 +29,46 @@ div.screen_selector{
     border-radius: 1em;
     align-self: flex-start;
 }
-div.screen{
+div.conf-screen{
     width:  85vw;
-    height: 50vh;
+    height: fit-content;
+    border-radius: 2em;
+    padding: 2em;
     background-color: #fff;
     display: flex;
     flex-direction: column;
 }
-div.Perfil{
-    padding: 5%;
-    border-radius: 2em;
-    background-color: #fff6f6;
+div.conf-Perfil{
+    padding: 1em;
 }
-div.Privacidade{
+div.conf-Privacidade{
   padding: 1em;
   border-radius: 1em;
+  height: 80%;
 }
-div.row{
+div.conf-row{
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  width: 100%;
 }
-div.Content{
+div.conf-Content{
   padding: 2em;
   border-radius: 2em;
 }
+div.conf-Input_Container{
+  width: 98%;
+  margin: 1em;
+}
 /*fim divs*/
 /*buttons*/
-button.submit_btn{
+button.conf-submit_btn{
   background-color: black;
   color: #fff;
   border-radius: 2em;
   padding: 1em;
   width: 15%;
-  height: 15%;
+  height: 8%;
   margin-top: 0.5em;
 }
 button:hover{
@@ -76,7 +81,7 @@ button:active{
 }
 /*fim buttons*/
 /*inputs*/
-input.Input_p{
+input.conf-Input_p{
   border-radius: 10px;
   padding: 10px;
   width: 100%;
@@ -84,7 +89,7 @@ input.Input_p{
 }
 /*fim inputs*/
 /*Auxiliares*/
-.screen_item{
+.conf-screen_item{
     border: none;
     border-radius: 1em;
     padding: 0.3em;
@@ -93,16 +98,16 @@ input.Input_p{
     background-color: lightgray;
     width: 100%;
 }
-.screen_item:hover{
+.conf-screen_item:hover{
     background-color: #fff;
 }
-.screen_item.active{
+.conf-screen_item.active{
     background-color: #fff;
 }
 
-.thin_border{
+.conf-thin_border{
   border: 1px solid #ccc;
 }
-.fade{
+.conf-fade{
   opacity: 0.5;
 }
