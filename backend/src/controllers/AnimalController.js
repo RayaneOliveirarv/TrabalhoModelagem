@@ -199,3 +199,18 @@ export const desfavoritarAnimal = async (req, res) => {
     res.status(500).json({ erro: err.message });
   }
 };
+
+export const buscarAvancada = async (req, res) => {
+  try {
+    const filtros = req.body;
+    console.log('Filtros recebidos:', filtros);
+    
+    const resultados = await AnimalModel.buscarAvancada(filtros);
+    console.log('Resultados encontrados:', resultados.length); // Debug
+    
+    res.json(resultados);
+  } catch (err) {
+    console.error('Erro na busca avançada:', err); // Debug
+    res.status(500).json({ erro: err.message });
+  }
+};
