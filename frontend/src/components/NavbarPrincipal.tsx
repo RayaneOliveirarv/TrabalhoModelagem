@@ -1,14 +1,28 @@
 import React from 'react';
-import '../styles/NavbarPrincipal/NavbarPrincipal.css';
 import { useNavigate } from 'react-router-dom';
-import { FaRegImage, FaRegHeart, FaUser, FaCog } from 'react-icons/fa';
+// NOVO: Import do hook de autenticação
+import { useAuth } from '../contexts/AuthContext';
+import '../styles/NavbarPrincipal/NavbarPrincipal.css';
+// NOVO: Import do ícone de logout
+import { FaRegImage, FaRegHeart, FaUser, FaCog, FaSignOutAlt } from 'react-icons/fa';
 
 const NavbarPrincipal: React.FC = () => {
   const navigate = useNavigate()
+    // NOVO: Acessa user e função de logout
+  const { user, logout } = useAuth();
+
+  // NOVO: Função para fazer logout e redirecionar
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <nav className="navbar-principal">
-      <div className="navbar-avatar" />
+      {/* NOVO: Avatar mostra inicial do email do usuário */}
+      <div className="navbar-avatar" title={user?.email || 'Usuário'}>
+        {user?.email?.charAt(0).toUpperCase()}
+      </div>
       <div className="navbar-menu">
         <button className="navbar-item" onClick={()=>navigate("/Feed")}>
           <FaRegImage className="navbar-icon" />
@@ -25,6 +39,11 @@ const NavbarPrincipal: React.FC = () => {
         <button className="navbar-item" onClick={()=>navigate("/Configuracoes")}>
           <FaCog className="navbar-icon" onClick={()=>navigate("/Configuracoes")}/>
           <span className="navbar-label">Configurações</span>
+        </button>
+        {/* NOVO: Botão de logout */}
+        <button className="navbar-item" onClick={handleLogout} style={{ marginTop: 'auto' }}>
+          <FaSignOutAlt className="navbar-icon" />
+          <span className="navbar-label">Sair</span>
         </button>
       </div>
     </nav>

@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors"; // NOVO: Import do CORS para permitir requisições do frontend
 import path from "path"; // Import necessário para servir a pasta de uploads
 import usuarioRoutes from "./routes/usuarioRoutes.js";
 import animalRoutes from "./routes/animalRoutes.js";
@@ -7,6 +8,14 @@ import documentoRoutes from "./routes/documentoRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 
 const app = express();
+
+// NOVO: Configuração CORS - permite requisições do frontend
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:5174'], // Portas do Vite
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // 1. Middleware para processar JSON (Essencial para RF01, RF04, RF10)
 app.use(express.json());

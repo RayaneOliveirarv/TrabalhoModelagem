@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+// NOVO: Import do serviço de API para fazer cadastro
+import api from '../services/api';
+// NOVO: Import das funções de validação
+import { validateEmail, validatePassword, validateConfirmPassword, validateRequired } from '../utils/validation';
 import '../styles/Cadastro/cadastro.css';
 
 const Cadastro: React.FC = () => {
@@ -9,17 +13,70 @@ const Cadastro: React.FC = () => {
     email: '',
     senha: '',
     confirmarSenha: '',
+    // NOVO: Campo tipo para selecionar perfil (ADOTANTE/PROTETOR/ONG)
+    tipo: 'ADOTANTE' as 'ADOTANTE' | 'PROTETOR' | 'ONG',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  // NOVO: Estado para erros de validação por campo
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  // NOVO: Estado de loading
+  const [loading, setLoading] = useState(false);
+  // NOVO: Mensagem de sucesso após cadastro
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // NOVO: Função de submit com validações completas e chamada à API
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/alterarCadastro');
+    
+    // NOVO: Validações de todos os campos
+    const newErrors: Record<string, string> = {};
+    
+    const nomeError = validateRequired(form.nome);
+    if (nomeError) newErrors.nome = nomeError;
+    
+    const emailError = validateEmail(form.email);
+    if (emailError) newErrors.email = emailError;
+    
+    const senhaError = validatePassword(form.senha);
+    if (senhaError) newErrors.senha = senhaError;
+    
+    const confirmarSenhaError = validateConfirmPassword(form.senha, form.confirmarSenha);
+    if (confirmarSenhaError) newErrors.confirmarSenha = confirmarSenhaError;
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    
+    setErrors({});
+    setLoading(true);
+    setSuccessMessage('');
+    
+    try {
+      // NOVO: Chama API para cadastrar usuário no backend
+      await api.cadastrarUsuario({
+        nome: form.nome,
+        email: form.email,
+        senha: form.senha,
+        tipo: form.tipo,
+      });
+      
+      // NOVO: Exibe mensagem de sucesso e redireciona
+      setSuccessMessage('Cadastro realizado com sucesso! Redirecionando...');
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+    } catch (error: any) {
+      // NOVO: Captura erros da API (ex: email duplicado)
+      setErrors({ general: error.message || 'Erro ao realizar cadastro. Tente novamente.' });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -38,7 +95,35 @@ const Cadastro: React.FC = () => {
         <h3>CADASTRO</h3>
         <p className="login-card-subtitle">Junte-se a nós e ajude a salvar vidas</p>
         <form onSubmit={handleSubmit} className="login-form">
-          <label htmlFor="nome">Nome Completo</label>
+          {errors.general && (
+            <div style={{ color: '#d32f2f', marginBottom: '16px', padding: '12px', backgroundColor: '#ffebee', borderRadius: '4px', fontSize: '14px' }}>
+              {errors.general}
+            </div>
+          )}
+          
+          {successMessage && (
+            <div style={{ color: '#2e7d32', marginBottom: '16px', padding: '12px', backgroundColor: '#e8f5e9', borderRadius: '4px', fontSize: '14px' }}>
+              {successMessage}
+            </div>
+          )}
+          
+          <label htmlFor="tipo">Tipo de Perfil</label>
+          <div className="input-wrapper">
+            <select
+              id="tipo"
+              name="tipo"
+              value={form.tipo}
+              onChange={(e) => setForm({ ...form, tipo: e.target.value as any })}
+              disabled={loading}
+              style={{ width: '100%', padding: '12px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '14px' }}
+            >
+              <option value="ADOTANTE">Adotante</option>
+              <option value="PROTETOR">Protetor Individual</option>
+              <option value="ONG">ONG</option>
+            </select>
+          </div>
+          
+          <label htmlFor="nome">{form.tipo === 'ONG' ? 'Nome da Instituição' : 'Nome Completo'}</label>
           <div className="input-wrapper">
             <input
               type="text"
@@ -46,9 +131,12 @@ const Cadastro: React.FC = () => {
               name="nome"
               value={form.nome}
               onChange={handleChange}
-              required
+              disabled={loading}
+              style={{ borderColor: errors.nome ? '#d32f2f' : undefined }}
             />
           </div>
+          {errors.nome && <span style={{ color: '#d32f2f', fontSize: '12px', marginTop: '-8px', display: 'block', marginBottom: '8px' }}>{errors.nome}</span>}
+          
           <label htmlFor="email">Email</label>
           <div className="input-wrapper">
             <input
@@ -57,9 +145,12 @@ const Cadastro: React.FC = () => {
               name="email"
               value={form.email}
               onChange={handleChange}
-              required
+              disabled={loading}
+              style={{ borderColor: errors.email ? '#d32f2f' : undefined }}
             />
           </div>
+          {errors.email && <span style={{ color: '#d32f2f', fontSize: '12px', marginTop: '-8px', display: 'block', marginBottom: '8px' }}>{errors.email}</span>}
+          
           <label htmlFor="senha">Senha</label>
           <div className="input-wrapper">
             <input
@@ -68,7 +159,8 @@ const Cadastro: React.FC = () => {
               name="senha"
               value={form.senha}
               onChange={handleChange}
-              required
+              disabled={loading}
+              style={{ borderColor: errors.senha ? '#d32f2f' : undefined }}
             />
             <span
               className="input-icon"
@@ -78,6 +170,8 @@ const Cadastro: React.FC = () => {
               👁️
             </span>
           </div>
+          {errors.senha && <span style={{ color: '#d32f2f', fontSize: '12px', marginTop: '-8px', display: 'block', marginBottom: '8px' }}>{errors.senha}</span>}
+          
           <label htmlFor="confirmarSenha">Confirmar Senha</label>
           <div className="input-wrapper">
             <input
@@ -86,7 +180,8 @@ const Cadastro: React.FC = () => {
               name="confirmarSenha"
               value={form.confirmarSenha}
               onChange={handleChange}
-              required
+              disabled={loading}
+              style={{ borderColor: errors.confirmarSenha ? '#d32f2f' : undefined }}
             />
             <span
               className="input-icon"
@@ -96,8 +191,10 @@ const Cadastro: React.FC = () => {
               👁️
             </span>
           </div>
-          <button type="submit" className="login-btn" style={{cursor: 'pointer', opacity: 1, color: '#00838f'}}>
-            REGISTRAR
+          {errors.confirmarSenha && <span style={{ color: '#d32f2f', fontSize: '12px', marginTop: '-8px', display: 'block', marginBottom: '8px' }}>{errors.confirmarSenha}</span>}
+          
+          <button type="submit" className="login-btn" disabled={loading} style={{cursor: 'pointer', opacity: loading ? 0.6 : 1, color: '#00838f'}}>
+            {loading ? 'CADASTRANDO...' : 'REGISTRAR'}
           </button>
         </form>
         <div className="login-footer">
