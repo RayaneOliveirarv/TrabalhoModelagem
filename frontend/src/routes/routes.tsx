@@ -1,20 +1,54 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+// NOVO: Import do hook de autenticação para verificar se está logado
+import { useAuth } from '../contexts/AuthContext';
 import Login from '../pages/Login';
 import Cadastro from '../pages/Cadastro';
 import AlterarCadastro from '../pages/AlterarCadastro';
 import AlterarContaONG from '../pages/AlterarContaONG';
 import Feed from '../pages/Feed';
+// NOVO: Import do componente de rota protegida
+import ProtectedRoute from '../components/ProtectedRoute';
 
 const AppRoutes: React.FC = () => {
+  // NOVO: Verifica se usuário está autenticado
+  const { isAuthenticated } = useAuth();
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
+        {/* NOVO: Redireciona para feed se já estiver logado */}
+        <Route 
+          path="/" 
+          element={isAuthenticated ? <Navigate to="/feed" replace /> : <Login />} 
+        />
         <Route path="/cadastro" element={<Cadastro />} />
-        <Route path="/alterarCadastro" element={<AlterarCadastro />} />
-        <Route path="/alterar-conta-ong" element={<AlterarContaONG />} />
-        <Route path="/feed" element={<Feed />} />
+        {/* NOVO: Rota protegida - apenas usuários autenticados */}
+        <Route 
+          path="/alterarCadastro" 
+          element={
+            <ProtectedRoute>
+              <AlterarCadastro />
+            </ProtectedRoute>
+          } 
+        />
+        {/* NOVO: Rota protegida - apenas ONG e PROTETOR podem acessar */}
+        <Route 
+          path="/alterar-conta-ong" 
+          element={
+            <ProtectedRoute requiredTypes={['ONG', 'PROTETOR']}>
+              <AlterarContaONG />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/feed" 
+          element={
+            <ProtectedRoute>
+              <Feed />
+            </ProtectedRoute>
+          } 
+        />
       </Routes>
     </Router>
   );
