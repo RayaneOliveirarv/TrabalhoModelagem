@@ -182,10 +182,10 @@ const handleFilterCategory = (categoria: string) => {
               <div className="feed-card-header">
                 <div className="feed-card-user-info">
                   <div className="feed-card-avatar">
-                    {animal.ong_nome?.[0]?.toUpperCase() || animal.protetor_nome?.[0]?.toUpperCase() || 'U'}
+                    {animal.dono_nome?.[0]?.toUpperCase() || 'Usuário'}
                   </div>
                   <span className="feed-card-username">
-                    {animal.ong_nome || animal.protetor_nome || 'Usuário'}
+                    {animal.dono_nome || 'Usuário'}
                   </span>
                 </div>
                 <span className={`feed-card-badge ${animal.categoria === 'Perdido' ? 'perdido' : 'adocao'}`}>
