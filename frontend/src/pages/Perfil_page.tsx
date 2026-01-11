@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import api from "../services/api";
 
 import { FaMapPin } from "react-icons/fa";
 import { FaCalendarAlt } from "react-icons/fa";
@@ -13,7 +15,40 @@ import NavbarPrincipal from "../components/NavbarPrincipal";
 import "../styles/Perfil_Page/Perf-style.css";
 
 const Perfil_page = ()=>{
-    const [user_Tags,setUser_Tags] = useState([]);
+    const { user } = useAuth();
+    const [userProfile, setUserProfile] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [animaisCount, setAnimaisCount] = useState(0);
+
+    useEffect(() => {
+        const carregarPerfil = async () => {
+            if (!user) return;
+            
+            try {
+                setLoading(true);
+                // Busca animais do usuário
+                const animais = await api.listarAnimais();
+                const meusAnimais = animais.filter((animal: any) => 
+                    animal.ong_id === user.id || animal.protetor_id === user.id
+                );
+                setAnimaisCount(meusAnimais.length);
+                
+                // Define os dados do perfil
+                setUserProfile({
+                    nome: user.email?.split('@')[0] || 'Usuário',
+                    email: user.email,
+                    tipo: user.tipo,
+                    dataCriacao: new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+                });
+            } catch (err) {
+                console.error('Erro ao carregar perfil:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        carregarPerfil();
+    }, [user]);
 
     const [active_Screen, setActiveScreen] = useState("MeusPosts")
     const [screen_element, setScreen_element] = useState<any>(<MeusPosts/>)
@@ -50,15 +85,23 @@ const Perfil_page = ()=>{
                     <div className="perf-row">
                         <img src={template} className="perf-user_photo" alt="User profile photo"/>
                         <div className="perf-column_start">
-                            <p className="perf-User-text"><b>Nome</b></p>
-                            <p className="perf-User-text">email@gmail.com</p>
-                            <div className="perf-row">
-                                <p className="perf-User-text"><FaMapPin/> Chique-chique bahia</p>
-                                <p className="perf-User-text"><FaCalendarAlt/> Membro, desde Mês Ano</p>
-                            </div>
-                            <div className="perf-row perf-userTags">
-
-                            </div>
+                            {loading ? (
+                                <p className="perf-User-text">Carregando...</p>
+                            ) : (
+                                <>
+                                    <p className="perf-User-text"><b>{userProfile?.nome || 'Usuário'}</b></p>
+                                    <p className="perf-User-text">{userProfile?.email || 'email@gmail.com'}</p>
+                                    <div className="perf-row">
+                                        <p className="perf-User-text"><FaMapPin/> Brasil</p>
+                                        <p className="perf-User-text"><FaCalendarAlt/> Membro desde {userProfile?.dataCriacao || 'Janeiro 2026'}</p>
+                                    </div>
+                                    <div className="perf-row perf-userTags">
+                                        <span style={{background: '#667eea', color: 'white', padding: '4px 12px', borderRadius: '12px', fontSize: '12px'}}>
+                                            {userProfile?.tipo || 'ADOTANTE'}
+                                        </span>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
 
@@ -67,17 +110,17 @@ const Perfil_page = ()=>{
                     <div className="perf-user_awards">
                         <div className="perf-award_item">
                             <FaPaw/>
-                            <p className="perf-center-text">N</p> 
+                            <p className="perf-center-text">{animaisCount}</p> 
                             <p className="perf-center-text">Posts</p>
                         </div>
                         <div className="perf-award_item">
                             <FaRegHeart/>
-                            <p className="perf-center-text">N</p> 
+                            <p className="perf-center-text">0</p> 
                             <p className="perf-center-text">Ajudas</p>
                         </div>
                         <div className="perf-award_item">
                             <FaAward/>
-                            <p className="perf-center-text">N</p> 
+                            <p className="perf-center-text">0</p> 
                             <p className="perf-center-text">Adoções</p>
                         </div>
                     </div>

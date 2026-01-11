@@ -24,20 +24,20 @@ const NavbarPrincipal: React.FC = () => {
         {user?.email?.charAt(0).toUpperCase()}
       </div>
       <div className="navbar-menu">
-        <button className="navbar-item" onClick={()=>navigate("/Feed")}>
+        <button className="navbar-item" onClick={()=>navigate("/feed")}>
           <FaRegImage className="navbar-icon" />
           <span className="navbar-label">Feed</span>
         </button>
-        <button className="navbar-item">
+        <button className="navbar-item" onClick={()=>navigate("/adocao")}>
           <FaRegHeart className="navbar-icon" />
-          <span className="navbar-label" onClick={()=>navigate("/Adocao")}>Adoção</span>
+          <span className="navbar-label">Adoção</span>
         </button>
-        <button className="navbar-item" onClick={()=>navigate("/Perfil_page")}>
+        <button className="navbar-item" onClick={()=>navigate("/perfil")}>
           <FaUser className="navbar-icon" />
           <span className="navbar-label">Perfil</span>
         </button>
-        <button className="navbar-item" onClick={()=>navigate("/Configuracoes")}>
-          <FaCog className="navbar-icon" onClick={()=>navigate("/Configuracoes")}/>
+        <button className="navbar-item" onClick={()=>navigate("/configuracoes")}>
+          <FaCog className="navbar-icon" />
           <span className="navbar-label">Configurações</span>
         </button>
         {/* NOVO: Botão de logout */}
