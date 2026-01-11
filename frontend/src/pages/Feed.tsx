@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-// NOVO: Import do hook de autenticação
 import { useAuth } from '../contexts/AuthContext';
-// NOVO: Import do serviço de API
 import api from '../services/api';
 import NavbarPrincipal from '../components/NavbarPrincipal';
 import BuscaFeed from '../components/BuscaFeed';
