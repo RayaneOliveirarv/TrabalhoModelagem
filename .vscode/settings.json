@@ -1,0 +1,14 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 3306,
+      "driver": "MySQL",
+      "name": "Sistema Adoção - MySQL",
+      "database": "sistema_adocao",
+      "username": "adocao",
+      "password": "123456"
+    }
+  ]
+}

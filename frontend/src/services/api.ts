@@ -142,9 +142,13 @@ class ApiService {
     return this.handleResponse<{ mensagem: string }>(response);
   }
 
-  async deletarAnimal(id: number) {
-    const response = await fetch(`${this.baseUrl}/animais/excluir/${id}`, {
+  async deletarAnimal(id: number, usuarioId?: number) {
+    const response = await fetch(`${this.baseUrl}/animais/${id}`, {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ usuario_id: usuarioId }),
     });
 
     return this.handleResponse<{ mensagem: string }>(response);

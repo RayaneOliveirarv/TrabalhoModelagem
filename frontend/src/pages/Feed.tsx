@@ -9,7 +9,7 @@ import NavbarFeed from '../components/NavbarFeed';
 import NovoPostButton from '../components/NovoPostButton';
 import PostModal from '../components/PostModal';
 import type { PostData } from '../components/PostModal';
-import { FaHeart, FaComment, FaStar, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaHeart, FaComment, FaStar, FaMapMarkerAlt, FaTrash } from 'react-icons/fa';
 import '../styles/Feed/Feed.css';
 
 const Feed: React.FC = () => {
@@ -90,10 +90,35 @@ const Feed: React.FC = () => {
       // Atualiza o feed
       const novosAnimais = await api.listarAnimais();
       setAnimais(novosAnimais);
+      
+      // Scroll suave ao topo para ver o novo post
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
       setPostError('Erro ao cadastrar animal: ' + (err.message || ''));
     } finally {
       setPostLoading(false);
+    }
+  };
+
+  // Função para excluir animal
+  const handleDeleteAnimal = async (animalId: number) => {
+    if (!user?.id) {
+      setError('Você precisa estar logado para excluir um animal.');
+      return;
+    }
+
+    if (!window.confirm('Tem certeza que deseja excluir este animal?')) {
+      return;
+    }
+
+    try {
+      await api.deletarAnimal(animalId, user.id);
+      setPostSuccess('Animal excluído com sucesso!');
+      // Atualiza o feed
+      const novosAnimais = await api.listarAnimais();
+      setAnimais(novosAnimais);
+    } catch (err: any) {
+      setError('Erro ao excluir animal: ' + (err.message || ''));
     }
   };
 
@@ -156,6 +181,15 @@ const Feed: React.FC = () => {
                 <button className="feed-card-action-btn favorite">
                   <FaStar size={16} />
                 </button>
+                {user && (animal.ong_id === user.id || animal.protetor_id === user.id) && (
+                  <button 
+                    className="feed-card-action-btn delete" 
+                    onClick={() => handleDeleteAnimal(animal.id)}
+                    title="Excluir animal"
+                  >
+                    <FaTrash size={16} />
+                  </button>
+                )}
               </div>
             </div>
           ))}
