@@ -20,7 +20,24 @@ class ApiService {
 
   // NOVO: Método privado para tratar respostas HTTP e erros
   private async handleResponse<T>(response: Response): Promise<T> {
-    const data = await response.json();
+    // Verifica se a resposta tem conteúdo antes de tentar fazer parse
+    const text = await response.text();
+    
+    // Se não há conteúdo, retorna objeto vazio ou lança erro
+    if (!text) {
+      if (!response.ok) {
+        throw new Error(`Erro ${response.status}: ${response.statusText}`);
+      }
+      return {} as T;
+    }
+
+    // Tenta fazer parse do JSON
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      throw new Error('Resposta inválida do servidor');
+    }
 
     if (!response.ok) {
       const error = data as ApiError;
