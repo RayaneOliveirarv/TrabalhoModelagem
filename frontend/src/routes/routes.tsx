@@ -7,6 +7,10 @@ import Cadastro from '../pages/Cadastro';
 import AlterarCadastro from '../pages/AlterarCadastro';
 import AlterarContaONG from '../pages/AlterarContaONG';
 import Feed from '../pages/Feed';
+import Configuracoes from '../pages/Configuracoes';
+import Perfil_page from '../pages/Perfil_page';
+import Adocao from '../pages/Adocao';
+
 // NOVO: Import do componente de rota protegida
 import ProtectedRoute from '../components/ProtectedRoute';
 
@@ -46,6 +50,30 @@ const AppRoutes: React.FC = () => {
           element={
             <ProtectedRoute>
               <Feed />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/configuracoes" 
+          element={
+            <ProtectedRoute>
+              <Configuracoes />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/perfil" 
+          element={
+            <ProtectedRoute>
+              <Perfil_page />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/adocao" 
+          element={
+            <ProtectedRoute>
+              <Adocao />
             </ProtectedRoute>
           } 
         />
