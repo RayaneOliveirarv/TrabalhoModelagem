@@ -8,6 +8,7 @@
   background: #fff;
   font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
   gap: 32px;
+  padding: 1em;
 }
 
 .navbar-avatar {
