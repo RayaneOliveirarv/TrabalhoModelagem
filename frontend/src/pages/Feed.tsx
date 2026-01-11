@@ -1,54 +1,167 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+// NOVO: Import do hook de autenticação
+import { useAuth } from '../contexts/AuthContext';
+// NOVO: Import do serviço de API
+import api from '../services/api';
 import NavbarPrincipal from '../components/NavbarPrincipal';
 import BuscaFeed from '../components/BuscaFeed';
 import NavbarFeed from '../components/NavbarFeed';
 import NovoPostButton from '../components/NovoPostButton';
+import PostModal from '../components/PostModal';
+import type { PostData } from '../components/PostModal';
+import { FaHeart, FaComment, FaStar, FaMapMarkerAlt } from 'react-icons/fa';
 import '../styles/Feed/Feed.css';
 
 const Feed: React.FC = () => {
+  const { user } = useAuth();
+  const [animais, setAnimais] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [postLoading, setPostLoading] = useState(false);
+  const [postError, setPostError] = useState('');
+  const [postSuccess, setPostSuccess] = useState('');
+
+  useEffect(() => {
+    const carregarAnimais = async () => {
+      try {
+        const data = await api.listarAnimais();
+        setAnimais(data);
+      } catch (err: any) {
+        setError('Erro ao carregar animais: ' + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    carregarAnimais();
+  }, []);
+
+  // Função para abrir o modal
+  const handleOpenModal = () => {
+    setModalOpen(true);
+    setPostError('');
+    setPostSuccess('');
+  };
+
+  // Função para fechar o modal
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  // Função para enviar o novo post
+  const handlePostSubmit = async (data: PostData) => {
+    setPostLoading(true);
+    setPostError('');
+    setPostSuccess('');
+    try {
+      if (!user?.id) {
+        setPostError('Você precisa estar logado para cadastrar um animal.');
+        setPostLoading(false);
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('nome', data.nome);
+      formData.append('descricao', data.descricao);
+      formData.append('categoria', data.categoria);
+      formData.append('especie', data.especie);
+      formData.append('porte', data.porte);
+      formData.append('localizacao', data.localizacao);
+      if (data.idade) formData.append('idade', data.idade);
+      
+      // Campos específicos para animais perdidos
+      if (data.categoria === 'Perdido') {
+        if (data.data_desaparecimento) formData.append('data_desaparecimento', data.data_desaparecimento);
+        if (data.ultima_localizacao) formData.append('ultima_localizacao', data.ultima_localizacao);
+      }
+      
+      // Adicionar o ID do usuário logado (ong_id ou protetor_id dependendo do tipo)
+      if (user.tipo === 'ONG') {
+        formData.append('ong_id', user.id.toString());
+      } else {
+        formData.append('protetor_id', user.id.toString());
+      }
+      
+      if (data.imagem) formData.append('foto', data.imagem);
+      
+      await api.cadastrarAnimal(formData);
+      setPostSuccess('Animal cadastrado com sucesso!');
+      
+      // Atualiza o feed
+      const novosAnimais = await api.listarAnimais();
+      setAnimais(novosAnimais);
+    } catch (err: any) {
+      setPostError('Erro ao cadastrar animal: ' + (err.message || ''));
+    } finally {
+      setPostLoading(false);
+    }
+  };
+
   return (
-    <div className="feed-bg">
+    <div className="feed-page">
+      <NavbarPrincipal />
       <div className="feed-container">
-        <NavbarPrincipal />
-        <div className="feed-row" style={{ alignItems: 'center' }}>
-          <div className="feed-busca" style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
-            <BuscaFeed />
-            <div style={{ marginLeft: 12 }}>
-              <NovoPostButton />
-            </div>
-          </div>
+        <div className="feed-top-bar">
+          <BuscaFeed />
+          <NovoPostButton onClick={handleOpenModal} />
         </div>
-        <div className="feed-navbarfeed">
-          <NavbarFeed />
-        </div>
-        <div className="feed-card-wrapper">
-          <div className="feed-card">
-            <div className="feed-card-header">
-              <div className="feed-card-avatar" />
-              <div className="feed-card-user">
-                <div className="feed-card-user-name">Fulano</div>
-                <div className="feed-card-user-time">3 horas atrás</div>
+        <NavbarFeed />
+        <PostModal isOpen={modalOpen} onClose={handleCloseModal} onSubmit={handlePostSubmit} />
+        {postLoading && <div className="feed-message">Enviando post...</div>}
+        {postError && <div className="feed-error">{postError}</div>}
+        {postSuccess && <div className="feed-success">{postSuccess}</div>}
+        {loading && <div className="feed-message">Carregando animais...</div>}
+        {error && <div className="feed-error">{error}</div>}
+        {!loading && !error && animais.length === 0 && <div className="feed-message">Nenhum animal cadastrado.</div>}
+        <div className="feed-cards-grid">
+          {animais.map((animal) => (
+            <div key={animal.id} className="feed-card">
+              <div className="feed-card-header">
+                <div className="feed-card-user-info">
+                  <div className="feed-card-avatar">
+                    {animal.ong_nome?.[0]?.toUpperCase() || animal.protetor_nome?.[0]?.toUpperCase() || 'U'}
+                  </div>
+                  <span className="feed-card-username">
+                    {animal.ong_nome || animal.protetor_nome || 'Usuário'}
+                  </span>
+                </div>
+                <span className={`feed-card-badge ${animal.categoria === 'Perdido' ? 'perdido' : 'adocao'}`}>
+                  {animal.categoria === 'Perdido' ? 'PERDIDO' : animal.categoria === 'Adocao' ? 'ADOÇÃO' : 'ENCONTRADO'}
+                </span>
               </div>
-              <div className="feed-card-status">PERDIDO</div>
+              <div className="feed-card-image-wrapper">
+                <img 
+                  src={animal.foto_url ? `http://localhost:3000/${animal.foto_url}` : 'https://images.unsplash.com/photo-1558788353-f76d92427f16'} 
+                  alt={animal.nome} 
+                  className="feed-card-image" 
+                />
+              </div>
+              <div className="feed-card-content">
+                <h3 className="feed-card-title">{animal.nome}</h3>
+                <p className="feed-card-description">{animal.descricao || 'Sem descrição disponível.'}</p>
+                <div className="feed-card-location">
+                  <FaMapMarkerAlt size={14} />
+                  {animal.localizacao || 'Localização não informada'}
+                </div>
+              </div>
+              <div className="feed-card-actions">
+                <button className="feed-card-action-btn like">
+                  <FaHeart size={16} />
+                  <span>20</span>
+                </button>
+                <button className="feed-card-action-btn comment">
+                  <FaComment size={16} />
+                  <span>6</span>
+                </button>
+                <button className="feed-card-action-btn favorite">
+                  <FaStar size={16} />
+                </button>
+              </div>
             </div>
-            <img src="https://images.unsplash.com/photo-1558788353-f76d92427f16" alt="dog" className="feed-card-img" />
-            <div className="feed-card-title">Ben10</div>
-            <div className="feed-card-desc">
-              Golden Retriever perdido desde ontem. Estava com coleira azul. Muito dócil e responde pelo nome Ben.
-            </div>
-            <div className="feed-card-location">
-              <span role="img" aria-label="location">📍</span> São Paulo, rua das flores - SP
-            </div>
-            <div className="feed-card-actions">
-              <span className="feed-card-like">20</span>
-              <span className="feed-card-comment">💬 6</span>
-              <span className="feed-card-star">⭐</span>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
   );
 };
-
 export default Feed;
