@@ -8,20 +8,26 @@ export const AnimalService = {
       throw new Error("É necessário informar o ID da ONG ou do Protetor responsável pelo animal.");
     }
 
-    // 2. RF06: Validação de Porte (Garante que o filtro funcione corretamente)
+    // 2. Validação de Categoria: Garante que o valor está correto
+    const categoriasValidas = ['Adocao', 'Perdido'];
+    if (dados.categoria && !categoriasValidas.includes(dados.categoria)) {
+      throw new Error("Categoria inválida. Opções aceitas: 'Adocao' ou 'Perdido'.");
+    }
+
+    // 3. RF06: Validação de Porte (Garante que o filtro funcione corretamente)
     const portesValidos = ['Pequeno', 'Médio', 'Grande', 'Não informado'];
     if (dados.porte && !portesValidos.includes(dados.porte)) {
       throw new Error("Porte inválido. Opções aceitas: Pequeno, Médio, Grande ou Não informado.");
     }
 
-    // 3. Regra para Categoria 'Perdido': Exige informações específicas
+    // 4. Regra para Categoria 'Perdido': Exige informações específicas
     if (dados.categoria === 'Perdido') {
       if (!dados.data_desaparecimento || !dados.ultima_localizacao) {
         throw new Error("Para animais perdidos, a data do desaparecimento e a última localização são obrigatórias.");
       }
     }
 
-    // 4. RF05: Tratamento de Foto
+    // 5. RF05: Tratamento de Foto
     // Caso não venha uma URL de foto, definimos uma imagem padrão para não quebrar o layout
     if (!dados.foto_url) {
       dados.foto_url = "uploads/animais/default-animal.png";
