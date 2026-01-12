@@ -117,5 +117,9 @@ export const UsuarioService = {
    */
   async deletarConta(id) {
     return await UsuarioModel.excluir(id);
+  },
+  
+  async getDadosUsuario(id){
+    return await UsuarioModel.buscar_dados(id);
   }
 };

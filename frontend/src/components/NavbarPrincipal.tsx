@@ -32,7 +32,7 @@ const NavbarPrincipal: React.FC = () => {
           <FaRegHeart className="navbar-icon" />
           <span className="navbar-label" onClick={()=>navigate("/Adocao")}>Adoção</span>
         </button>
-        <button className="navbar-item" onClick={()=>navigate("/Perfil_page")}>
+        <button className="navbar-item" onClick={()=>navigate("/perfil")}>
           <FaUser className="navbar-icon" />
           <span className="navbar-label">Perfil</span>
         </button>

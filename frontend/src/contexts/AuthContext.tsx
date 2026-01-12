@@ -115,6 +115,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 // NOVO: Hook customizado para usar o contexto de autenticação
 };
 
+export const getUserData = async() => {
+  const id = localStorage.getItem('@olpet:user');
+  const item = id ? JSON.parse(id) : null;
+
+  console.log("ID usuario busca",item.id)
+  const response = await api.getDadosUsuario(item.id);
+
+  console.log("resposta que vai pro front: ", response)
+
+  localStorage.setItem("user_data", JSON.stringify(response.dados_usr));
+}
 export const useAuth = () => {
   const context = useContext(AuthContext);
 

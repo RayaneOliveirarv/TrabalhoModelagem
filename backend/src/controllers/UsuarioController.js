@@ -99,3 +99,15 @@ export const deletarUsuario = async (req, res) => {
     res.status(500).json({ erro: err.message });
   }
 };
+
+export const getDadosUsuario = async (req,res)=>{
+  try{
+    const dados = await UsuarioService.getDadosUsuario(req.params.id);
+    console.log("retorno dados: ",dados);
+    res.json({dados_usr:dados});
+  }
+  catch(err)
+  {
+    res.status(500).json({ erro: err.message });
+  }
+}

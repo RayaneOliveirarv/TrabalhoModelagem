@@ -74,6 +74,38 @@ export const UsuarioModel = {
     });
   },
 
+  buscar_dados(id){
+    const sql = `SELECT
+  u.id,
+  u.email,
+  u.tipo,
+  -- Colunas que podem ser nulas dependendo do tipo
+  a.nome              AS adotante_nome,
+  a.cpf               AS adotante_cpf,
+  p.nome              AS protetor_nome,
+  p.cpf               AS protetor_cpf,
+  p.contato           AS protetor_contato,
+  p.localizacao       AS protetor_localizacao,
+  o.nome              AS ong_nome,
+  o.razao_social      AS ong_razao_social,
+  o.cnpj              AS ong_cnpj,
+  o.localizacao       AS ong_localizacao
+FROM
+  usuarios u
+LEFT JOIN adotantes a               ON a.usuario_id = u.id
+LEFT JOIN protetores_individuais p  ON p.usuario_id = u.id
+LEFT JOIN ongs o                    ON o.usuario_id = u.id
+WHERE
+  u.id = ?;`
+  
+  return new Promise((resolve, reject) => {
+    db.query(sql,[id],(err,result)=>{
+      if(err) reject(err);
+      else resolve(result);
+    });
+  });
+  },
+
   /**
    * RF19: Controle de Moderação.
    * Altera se o usuário pode ou não logar no sistema.

@@ -4,7 +4,8 @@ import {
   loginUsuario, 
   atualizarUsuario, 
   deletarUsuario,
-  enviarDocumentacao 
+  enviarDocumentacao ,
+  getDadosUsuario
 } from "../controllers/UsuarioController.js";
 import { denunciarUsuario } from "../controllers/DenunciaUsuarioController.js";
 import { uploadDocumento } from "../config/multer.js";
@@ -13,11 +14,11 @@ import { NotificacaoModel } from "../models/NotificacaoModel.js"; // Importaçã
 const router = express.Router();
 
 // --- 1. Rotas de Gerenciamento de Conta ---
+router.get("/:id/dados", getDadosUsuario);
 router.post("/cadastrar", cadastrarUsuario);
 router.post("/login", loginUsuario);
 router.put("/perfil/:id", atualizarUsuario);
 router.delete("/excluir/:id", deletarUsuario);
-
 // --- 2. RF03: Envio de Documentação (ONGs e Protetores) ---
 /**
  * @route   PUT /usuarios/enviar-documentacao/:id

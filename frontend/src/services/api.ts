@@ -22,6 +22,7 @@ class ApiService {
   private async handleResponse<T>(response: Response): Promise<T> {
     // Verifica se a resposta tem conteúdo antes de tentar fazer parse
     const text = await response.text();
+      console.log("resposta do servidor: ",response, text);
     
     // Se não há conteúdo, retorna objeto vazio ou lança erro
     if (!text) {
@@ -35,6 +36,7 @@ class ApiService {
     let data;
     try {
       data = JSON.parse(text);
+      console.log("final: ",data)
     } catch (e) {
       throw new Error('Resposta inválida do servidor');
     }
@@ -98,6 +100,16 @@ class ApiService {
 
     return this.handleResponse<{ mensagem: string }>(response);
   }
+
+async getDadosUsuario(id: number) {
+  const response = await fetch(`${this.baseUrl}/usuarios/${id}/dados`,{
+    method: 'GET',
+  });
+
+  console.log("resposta na api: ",response)
+
+  return this.handleResponse<any>(response);
+}
 
   async deletarConta(id: number) {
     const response = await fetch(`${this.baseUrl}/usuarios/excluir/${id}`, {

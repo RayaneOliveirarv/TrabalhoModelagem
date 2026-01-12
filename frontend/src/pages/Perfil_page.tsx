@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { use, useState } from "react";
 
 import { FaMapPin } from "react-icons/fa";
 import { FaCalendarAlt } from "react-icons/fa";
@@ -12,11 +12,32 @@ import template from "../assets/img/template_image.jpg";
 import NavbarPrincipal from "../components/NavbarPrincipal";
 import "../styles/Perfil_Page/Perf-style.css";
 
+import { getUserData } from "../contexts/AuthContext";
+import { useEffect } from "react";
 const Perfil_page = ()=>{
-    const [user_Tags,setUser_Tags] = useState([]);
-
     const [active_Screen, setActiveScreen] = useState("MeusPosts")
     const [screen_element, setScreen_element] = useState<any>(<MeusPosts/>)
+    const [is_enabled, setIs_enabled] = useState(false);
+
+    interface UserProfileData {
+        email: string;
+        tipo: 'ADOTANTE' | 'PROTETOR' | 'ONG';
+        // Campos de Adotante
+        adotante_nome?:  string;
+        adotante_cpf?: string;
+        // Campos de Protetor
+        protetor_nome?: string;
+        protetor_cpf?: string;
+        protetor_contato?: string;
+        protetor_localizacao?: string;
+        // Campos de ONG
+        ong_nome?: string;
+        ong_razao_social?: string;
+        ong_cnpj?: string;
+        ong_localizacao?: string;
+        }
+    const [user_Data, setUser_Data] = useState<UserProfileData>();
+
     const Screens = 
         [
         {name:"MeusPosts",component:<MeusPosts/>},
@@ -41,6 +62,31 @@ const Perfil_page = ()=>{
             </div>
         )
     }
+    const loadUserData = async () => {
+            try{
+                const cachedData = localStorage.getItem("user_data");
+                
+                if (cachedData) {
+                    setUser_Data(JSON.parse(cachedData)[0]);
+                    return;
+                } 
+                await getUserData();
+                const userData = localStorage.getItem("user_data");
+                setUser_Data(userData ? JSON.parse(userData) : null);
+                }
+            catch(err){
+                console.log(err)
+            }
+        }
+    useEffect(()=>{
+        loadUserData();
+    }
+    ,[])
+    const teste = ()=>{
+        console.log(user_Data)
+        loadUserData();
+    }
+
     return(
     <div className="perf-Perfil">
         <NavbarPrincipal/>
@@ -50,11 +96,11 @@ const Perfil_page = ()=>{
                     <div className="perf-row">
                         <img src={template} className="perf-user_photo" alt="User profile photo"/>
                         <div className="perf-column_start">
-                            <p className="perf-User-text"><b>Nome</b></p>
-                            <p className="perf-User-text">email@gmail.com</p>
+                            <p className="perf-User-text"><b>{user_Data?.adotante_nome}{user_Data?.protetor_nome}{user_Data?.ong_nome}</b></p>
+                            <p className="perf-User-text">{user_Data?.email}</p>
                             <div className="perf-row">
-                                <p className="perf-User-text"><FaMapPin/> Chique-chique bahia</p>
-                                <p className="perf-User-text"><FaCalendarAlt/> Membro, desde Mês Ano</p>
+                                <p className="perf-User-text"><FaMapPin/>TODO</p>
+                                <p className="perf-User-text"><FaCalendarAlt/>TODO</p>
                             </div>
                             <div className="perf-row perf-userTags">
 
@@ -68,23 +114,24 @@ const Perfil_page = ()=>{
                         <div className="perf-award_item">
                             <FaPaw/>
                             <p className="perf-center-text">N</p> 
-                            <p className="perf-center-text">Posts</p>
+                            <p className="perf-center-text">TODO</p>
                         </div>
                         <div className="perf-award_item">
                             <FaRegHeart/>
                             <p className="perf-center-text">N</p> 
-                            <p className="perf-center-text">Ajudas</p>
+                            <p className="perf-center-text">TODO</p>
                         </div>
                         <div className="perf-award_item">
                             <FaAward/>
                             <p className="perf-center-text">N</p> 
-                            <p className="perf-center-text">Adoções</p>
+                            <p className="perf-center-text">TODO</p>
                         </div>
                     </div>
                 </div>
                 <div className="perf-center">
                 {screen_selector()}
                 </div>
+                <button onClick={()=>teste()}>teste</button>
                 <div className="perf-Selected_content">
                 {screen_element}
                 </div>
