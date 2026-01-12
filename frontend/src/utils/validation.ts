@@ -1,9 +1,9 @@
 // ============================================
-// NOVO: Funções de Validação Customizadas
+//  Funções de Validação Customizadas
 // Valida campos de formulários com regras específicas
 // ============================================
 
-// NOVO: Regras de validação centralizadas
+// Regras de validação centralizadas
 export const validationRules = {
   email: {
     pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
@@ -32,7 +32,7 @@ export const validationRules = {
   },
 };
 
-// NOVO: Valida formato de email
+// Valida formato de email
 export const validateEmail = (email: string): string | null => {
   if (!email) {
     return validationRules.required.message;
@@ -43,7 +43,7 @@ export const validateEmail = (email: string): string | null => {
   return null;
 };
 
-// NOVO: Valida senha (com opção de validação estrita)
+//  Valida senha (com opção de validação estrita)
 export const validatePassword = (password: string, strict: boolean = false): string | null => {
   if (!password) {
     return validationRules.required.message;
@@ -57,7 +57,7 @@ export const validatePassword = (password: string, strict: boolean = false): str
   return null;
 };
 
-// NOVO: Valida se senha e confirmação coincidem
+// Valida se senha e confirmação coincidem
 export const validateConfirmPassword = (password: string, confirmPassword: string): string | null => {
   if (!confirmPassword) {
     return validationRules.required.message;
@@ -68,7 +68,7 @@ export const validateConfirmPassword = (password: string, confirmPassword: strin
   return null;
 };
 
-// NOVO: Valida CPF básico (formato e dígitos)
+// Valida CPF básico (formato e dígitos)
 export const validateCPF = (cpf: string): string | null => {
   if (!cpf) {
     return validationRules.required.message;
@@ -89,7 +89,7 @@ export const validateCPF = (cpf: string): string | null => {
   return null;
 };
 
-// NOVO: Valida CNPJ básico
+//  Valida CNPJ básico
 export const validateCNPJ = (cnpj: string): string | null => {
   if (!cnpj) {
     return validationRules.required.message;
@@ -112,7 +112,7 @@ export const validateRequired = (value: string): string | null => {
   return null;
 };
 
-// NOVO: Formata CPF automaticamente (000.000.000-00)
+// Formata CPF automaticamente (000.000.000-00)
 export const formatCPF = (value: string): string => {
   const cleaned = value.replace(/\D/g, '');
   const match = cleaned.match(/^(\d{3})(\d{3})(\d{3})(\d{2})$/);
@@ -122,7 +122,7 @@ export const formatCPF = (value: string): string => {
   return cleaned;
 };
 
-// NOVO: Formata CNPJ automaticamente (00.000.000/0000-00)
+// Formata CNPJ automaticamente (00.000.000/0000-00)
 export const formatCNPJ = (value: string): string => {
   const cleaned = value.replace(/\D/g, '');
   const match = cleaned.match(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/);
@@ -132,7 +132,7 @@ export const formatCNPJ = (value: string): string => {
   return cleaned;
 };
 
-// NOVO: Formata telefone automaticamente ((00) 00000-0000)
+//Formata telefone automaticamente ((00) 00000-0000)
 export const formatPhone = (value: string): string => {
   const cleaned = value.replace(/\D/g, '');
   if (cleaned.length <= 10) {

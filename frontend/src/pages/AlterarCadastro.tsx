@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// NOVO: Import do hook de autenticação
 import { useAuth } from '../contexts/AuthContext';
-// NOVO: Import da API (preparado para futuras integrações)
 import api from '../services/api';
 import '../styles/AlterarCadastro/AlterarCadastro.css';
 
 const AlterarCadastro: React.FC = () => {
   const navigate = useNavigate();
-  // NOVO: Acessa dados do usuário e função de atualização
+  // Acessa dados do usuário e função de atualização
   const { user, updateUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -29,7 +27,6 @@ const AlterarCadastro: React.FC = () => {
 
     setLoading(true);
     try {
-      // Aqui você pode implementar uma rota específica no backend para promoção
       // Por enquanto, vamos apenas redirecionar para a página de alteração
       navigate('/alterar-conta-ong');
     } catch (error: any) {

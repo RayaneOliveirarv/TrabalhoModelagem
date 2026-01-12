@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// NOVO: Import do serviço de API para fazer cadastro
 import api from '../services/api';
-// NOVO: Import das funções de validação
 import { validateEmail, validatePassword, validateConfirmPassword, validateRequired } from '../utils/validation';
 import '../styles/Cadastro/cadastro.css';
 
@@ -13,27 +11,27 @@ const Cadastro: React.FC = () => {
     email: '',
     senha: '',
     confirmarSenha: '',
-    // NOVO: Campo tipo para selecionar perfil (ADOTANTE/PROTETOR/ONG)
+    //  Campo tipo para selecionar perfil (ADOTANTE/PROTETOR/ONG)
     tipo: 'ADOTANTE' as 'ADOTANTE' | 'PROTETOR' | 'ONG',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  // NOVO: Estado para erros de validação por campo
+  // Estado para erros de validação por campo
   const [errors, setErrors] = useState<Record<string, string>>({});
-  // NOVO: Estado de loading
+  // Estado de loading
   const [loading, setLoading] = useState(false);
-  // NOVO: Mensagem de sucesso após cadastro
+  // Mensagem de sucesso após cadastro
   const [successMessage, setSuccessMessage] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // NOVO: Função de submit com validações completas e chamada à API
+  // Função de submit com validações completas e chamada à API
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // NOVO: Validações de todos os campos
+    //  Validações de todos os campos
     const newErrors: Record<string, string> = {};
     
     const nomeError = validateRequired(form.nome);
@@ -58,7 +56,7 @@ const Cadastro: React.FC = () => {
     setSuccessMessage('');
     
     try {
-      // NOVO: Chama API para cadastrar usuário no backend
+      // Chama API para cadastrar usuário no backend
       await api.cadastrarUsuario({
         nome: form.nome,
         email: form.email,
@@ -66,13 +64,13 @@ const Cadastro: React.FC = () => {
         tipo: form.tipo,
       });
       
-      // NOVO: Exibe mensagem de sucesso e redireciona
+      // Exibe mensagem de sucesso e redireciona
       setSuccessMessage('Cadastro realizado com sucesso! Redirecionando...');
       setTimeout(() => {
         navigate('/');
       }, 2000);
     } catch (error: any) {
-      // NOVO: Captura erros da API (ex: email duplicado)
+      // Captura erros da API (ex: email duplicado)
       setErrors({ general: error.message || 'Erro ao realizar cadastro. Tente novamente.' });
     } finally {
       setLoading(false);
