@@ -89,13 +89,16 @@ class ApiService {
     }>(response);
   }
 
-  async atualizarPerfil(id: number, tipo: string, dados: any) {
+  async atualizarPerfil(id: number, tipo: string, dados: {
+    nome: string;
+    email: string;
+  }) {
     const response = await fetch(`${this.baseUrl}/usuarios/perfil/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ tipo, ...dados }),
+      body: JSON.stringify({...dados}),
     });
 
     return this.handleResponse<{ mensagem: string }>(response);

@@ -90,12 +90,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // NOVO: Atualiza dados do usuário (útil para edição de perfil)
-  const updateUser = (userData: Partial<User>) => {
+  const updateUser = async (userData: Partial<User>) => {
     if (user) {
       const updatedUser = { ...user, ...userData };
       setUser(updatedUser);
+      console.log("user atualizado: ",updatedUser)
       localStorage.setItem('@olpet:user', JSON.stringify(updatedUser));
     }
+
+    try{
+      await api.atualizarPerfil(user!.id, user!.tipo, {nome: user?.nome ?? "", email:user?.email ?? ""});
+    }
+    catch(err)
+    {
+      throw err;
+    }
+
   };
 
   return (
@@ -124,7 +134,16 @@ export const getUserData = async() => {
 
   console.log("resposta que vai pro front: ", response)
 
-  localStorage.setItem("user_data", JSON.stringify(response.dados_usr));
+  const dados_res = {
+      nome: item.nome,
+      email: item.email,
+      tipo: response.dados_usr[0].tipo,
+      status_conta: response.dados_usr[0].status_conta,
+  }
+
+  console.log(dados_res)
+
+  localStorage.setItem("user_data", JSON.stringify(dados_res));
 }
 export const useAuth = () => {
   const context = useContext(AuthContext);

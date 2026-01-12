@@ -15,32 +15,30 @@ import "../styles/Perfil_Page/Perf-style.css";
 import { getUserData } from "../contexts/AuthContext";
 import { useEffect } from "react";
 const Perfil_page = ()=>{
-    const [active_Screen, setActiveScreen] = useState("MeusPosts")
-    const [screen_element, setScreen_element] = useState<any>(<MeusPosts/>)
-    const [is_enabled, setIs_enabled] = useState(false);
+    const [user_Data, setUser_Data] = useState<UserProfileData>();
+    const [active_Screen, setActiveScreen] = useState<string>()
+    const [screen_element, setScreen_element] = useState<any>()
+
 
     interface UserProfileData {
         email: string;
         tipo: 'ADOTANTE' | 'PROTETOR' | 'ONG';
         // Campos de Adotante
-        adotante_nome?:  string;
+        nome?:  string;
         adotante_cpf?: string;
         // Campos de Protetor
-        protetor_nome?: string;
         protetor_cpf?: string;
         protetor_contato?: string;
         protetor_localizacao?: string;
         // Campos de ONG
-        ong_nome?: string;
         ong_razao_social?: string;
         ong_cnpj?: string;
         ong_localizacao?: string;
         }
-    const [user_Data, setUser_Data] = useState<UserProfileData>();
 
     const Screens = 
         [
-        {name:"MeusPosts",component:<MeusPosts/>},
+        {name:"MeusPosts",component:<MeusPosts nome={user_Data?.nome ?? ""} email={user_Data?.email ?? ""} data_post="" status=""/>},
         {name:"Favoritos",component:<Favoritos/>},
         ]
     const choose_screen = (Screen:string)=>{
@@ -70,6 +68,7 @@ const Perfil_page = ()=>{
                     setUser_Data(JSON.parse(cachedData)[0]);
                     return;
                 } 
+
                 await getUserData();
                 const userData = localStorage.getItem("user_data");
                 setUser_Data(userData ? JSON.parse(userData) : null);
@@ -78,13 +77,18 @@ const Perfil_page = ()=>{
                 console.log(err)
             }
         }
+        
     useEffect(()=>{
         loadUserData();
     }
     ,[])
-    const teste = ()=>{
-        console.log(user_Data)
-        loadUserData();
+    const teste = async ()=>{
+        await getUserData();
+        const userData = localStorage.getItem("user_data");
+        setUser_Data(userData ? JSON.parse(userData) : null);
+
+        console.log(localStorage.getItem("@olpet:user"))
+        console.log("user data ",user_Data)
     }
 
     return(
@@ -96,7 +100,7 @@ const Perfil_page = ()=>{
                     <div className="perf-row">
                         <img src={template} className="perf-user_photo" alt="User profile photo"/>
                         <div className="perf-column_start">
-                            <p className="perf-User-text"><b>{user_Data?.adotante_nome}{user_Data?.protetor_nome}{user_Data?.ong_nome}</b></p>
+                            <p className="perf-User-text"><b>{user_Data?.nome}</b></p>
                             <p className="perf-User-text">{user_Data?.email}</p>
                             <div className="perf-row">
                                 <p className="perf-User-text"><FaMapPin/>TODO</p>
