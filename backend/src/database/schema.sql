@@ -81,7 +81,7 @@ CREATE TABLE animais_adocao (
   data_desaparecimento DATE, -- Usado se a categoria for 'Perdido'
   ultima_localizacao VARCHAR(100),
   status ENUM('Disponivel', 'Em_Analise', 'Adotado', 'Perdido', 'Encontrado') DEFAULT 'Disponivel',
-  categoria ENUM('Adocao', 'Perdido') DEFAULT 'Adocao',
+  categoria ENUM('Adocao', 'Perdido', 'Encontrado') DEFAULT 'Adocao',
   
   -- Um animal pode pertencer ou a uma ONG ou a um Protetor
   ong_id INT NULL,
