@@ -1,24 +1,31 @@
-import React, { useState } from 'react';
+import React from 'react';
 import '../styles/NavbarFeed/NavbarFeed.css';
 
+// Definição das opções para garantir que o texto coincida com o que o banco espera
 const options = [
-  'Todos',
-  'Perdidos',
-  'Encontrados',
-  'Adoção'
+  { label: 'Todos', value: 'TODOS' },
+  { label: 'Perdidos', value: 'PERDIDO' },
+  { label: 'Encontrados', value: 'ENCONTRADO' },
+  { label: 'Adoção', value: 'ADOCAO' }
 ];
 
-const NavbarFeed: React.FC = () => {
-  const [active, setActive] = useState(0);
+// Interface para definir as propriedades (props) que o componente recebe
+interface NavbarFeedProps {
+  categoriaAtiva: string;
+  onFilterChange: (categoria: string) => void;
+}
+
+const NavbarFeed: React.FC<NavbarFeedProps> = ({ categoriaAtiva, onFilterChange }) => {
   return (
     <nav className="navbar-feed">
-      {options.map((opt, idx) => (
+      {options.map((opt) => (
         <button
-          key={opt}
-          className={`navbar-feed-item${active === idx ? ' active' : ''}`}
-          onClick={() => setActive(idx)}
+          key={opt.value}
+          className={`navbar-feed-item${categoriaAtiva === opt.value ? ' active' : ''}`}
+          // Quando clica, chama a função do Feed passando o valor
+          onClick={() => onFilterChange(opt.value)}
         >
-          {opt.toUpperCase()}
+          {opt.label.toUpperCase()}
         </button>
       ))}
     </nav>

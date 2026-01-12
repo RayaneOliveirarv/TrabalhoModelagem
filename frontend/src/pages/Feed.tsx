@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+// Import do hook de autenticação
 import { useAuth } from '../contexts/AuthContext';
+// Import do serviço de API
 import api from '../services/api';
 import NavbarPrincipal from '../components/NavbarPrincipal';
 import BuscaFeed from '../components/BuscaFeed';
@@ -15,10 +17,16 @@ const Feed: React.FC = () => {
   const [animais, setAnimais] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [categoriaAtiva, setCategoriaAtiva] = useState('TODOS');
+  
+  // ESTADOS PARA O MODAL E POSTAGEM
   const [modalOpen, setModalOpen] = useState(false);
   const [postLoading, setPostLoading] = useState(false);
   const [postError, setPostError] = useState('');
   const [postSuccess, setPostSuccess] = useState('');
+
+  // Estado para armazenar o termo de busca
+  const [termoBusca, setTermoBusca] = useState('');
 
   useEffect(() => {
     const carregarAnimais = async () => {
@@ -33,6 +41,31 @@ const Feed: React.FC = () => {
     };
     carregarAnimais();
   }, []);
+
+  // Função passada no NavbarFeed
+const handleFilterCategory = (categoria: string) => {
+  setCategoriaAtiva(categoria);
+};
+
+  // Função Passada no BuscaFeed
+  const handleSearch = (termo: string) => {
+    setTermoBusca(termo.toLowerCase());
+  };
+
+  // Filtragem dos animais baseada no termo de busca
+  const animaisFiltrados = animais.filter((animal) => {
+  const matchesBusca = 
+    animal.nome?.toLowerCase().includes(termoBusca) ||
+    animal.especie?.toLowerCase().includes(termoBusca) ||
+    animal.localizacao?.toLowerCase().includes(termoBusca);
+
+  // Lógica da Categoria
+  const matchesCategoria = 
+    categoriaAtiva === 'TODOS' || 
+    animal.categoria?.toUpperCase() === categoriaAtiva;
+
+  return matchesBusca && matchesCategoria;
+});
 
   // Função para abrir o modal
   const handleOpenModal = () => {
@@ -67,13 +100,11 @@ const Feed: React.FC = () => {
       formData.append('localizacao', data.localizacao);
       if (data.idade) formData.append('idade', data.idade);
       
-      // Campos específicos para animais perdidos
       if (data.categoria === 'Perdido') {
         if (data.data_desaparecimento) formData.append('data_desaparecimento', data.data_desaparecimento);
         if (data.ultima_localizacao) formData.append('ultima_localizacao', data.ultima_localizacao);
       }
       
-      // Adicionar o ID do usuário logado (ong_id ou protetor_id dependendo do tipo)
       if (user.tipo === 'ONG') {
         formData.append('ong_id', user.id.toString());
       } else {
@@ -85,12 +116,11 @@ const Feed: React.FC = () => {
       await api.cadastrarAnimal(formData);
       setPostSuccess('Animal cadastrado com sucesso!');
       
-      // Atualiza o feed
       const novosAnimais = await api.listarAnimais();
       setAnimais(novosAnimais);
       
-      // Scroll suave ao topo para ver o novo post
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      handleCloseModal(); // Fecha o modal após o sucesso
     } catch (err: any) {
       setPostError('Erro ao cadastrar animal: ' + (err.message || ''));
     } finally {
@@ -112,7 +142,6 @@ const Feed: React.FC = () => {
     try {
       await api.deletarAnimal(animalId, user.id);
       setPostSuccess('Animal excluído com sucesso!');
-      // Atualiza o feed
       const novosAnimais = await api.listarAnimais();
       setAnimais(novosAnimais);
     } catch (err: any) {
@@ -125,33 +154,45 @@ const Feed: React.FC = () => {
       <NavbarPrincipal />
       <div className="feed-container">
         <div className="feed-top-bar">
-          <BuscaFeed />
+          {/* Funções e busca para componentes */}
+          <BuscaFeed onSearch={handleSearch} />
           <NovoPostButton onClick={handleOpenModal} />
         </div>
-        <NavbarFeed />
+        <NavbarFeed categoriaAtiva={categoriaAtiva} onFilterChange={handleFilterCategory} />
+        
         <PostModal isOpen={modalOpen} onClose={handleCloseModal} onSubmit={handlePostSubmit} />
+        
         {postLoading && <div className="feed-message">Enviando post...</div>}
         {postError && <div className="feed-error">{postError}</div>}
         {postSuccess && <div className="feed-success">{postSuccess}</div>}
+        
         {loading && <div className="feed-message">Carregando animais...</div>}
         {error && <div className="feed-error">{error}</div>}
-        {!loading && !error && animais.length === 0 && <div className="feed-message">Nenhum animal cadastrado.</div>}
+        
+        {!loading && !error && animaisFiltrados.length === 0 && (
+          <div className="feed-message">
+            {termoBusca ? `Nenhum resultado para "${termoBusca}"` : "Nenhum animal cadastrado."}
+          </div>
+        )}
+
         <div className="feed-cards-grid">
-          {animais.map((animal) => (
+          {/* Usando a lista FILTRADA para renderizar os cards */}
+          {animaisFiltrados.map((animal) => (
             <div key={animal.id} className="feed-card">
               <div className="feed-card-header">
                 <div className="feed-card-user-info">
                   <div className="feed-card-avatar">
-                    {animal.ong_nome?.[0]?.toUpperCase() || animal.protetor_nome?.[0]?.toUpperCase() || 'U'}
+                    {animal.dono_nome?.[0]?.toUpperCase() || 'Usuário'}
                   </div>
                   <span className="feed-card-username">
-                    {animal.ong_nome || animal.protetor_nome || 'Usuário'}
+                    {animal.dono_nome || 'Usuário'}
                   </span>
                 </div>
                 <span className={`feed-card-badge ${animal.categoria === 'Perdido' ? 'perdido' : 'adocao'}`}>
                   {animal.categoria === 'Perdido' ? 'PERDIDO' : animal.categoria === 'Adocao' ? 'ADOÇÃO' : 'ENCONTRADO'}
                 </span>
               </div>
+
               <div className="feed-card-image-wrapper">
                 <img 
                   src={animal.foto_url ? `http://localhost:3000/${animal.foto_url}` : 'https://images.unsplash.com/photo-1558788353-f76d92427f16'} 
@@ -159,6 +200,7 @@ const Feed: React.FC = () => {
                   className="feed-card-image" 
                 />
               </div>
+
               <div className="feed-card-content">
                 <h3 className="feed-card-title">{animal.nome}</h3>
                 <p className="feed-card-description">{animal.descricao || 'Sem descrição disponível.'}</p>
@@ -167,6 +209,7 @@ const Feed: React.FC = () => {
                   {animal.localizacao || 'Localização não informada'}
                 </div>
               </div>
+
               <div className="feed-card-actions">
                 <button className="feed-card-action-btn like">
                   <FaHeart size={16} />
@@ -179,6 +222,7 @@ const Feed: React.FC = () => {
                 <button className="feed-card-action-btn favorite">
                   <FaStar size={16} />
                 </button>
+                
                 {user && (animal.ong_id === user.id || animal.protetor_id === user.id) && (
                   <button 
                     className="feed-card-action-btn delete" 
@@ -196,4 +240,5 @@ const Feed: React.FC = () => {
     </div>
   );
 };
+
 export default Feed;

@@ -9,9 +9,9 @@ export const AnimalService = {
     }
 
     // 2. Validação de Categoria: Garante que o valor está correto
-    const categoriasValidas = ['Adocao', 'Perdido'];
+    const categoriasValidas = ['Adocao', 'Perdido', 'Encontrado'];
     if (dados.categoria && !categoriasValidas.includes(dados.categoria)) {
-      throw new Error("Categoria inválida. Opções aceitas: 'Adocao' ou 'Perdido'.");
+      throw new Error("Categoria inválida. Opções aceitas: 'Adocao', 'Perdido' ou 'Encontrado'.");
     }
 
     // 3. RF06: Validação de Porte (Garante que o filtro funcione corretamente)
