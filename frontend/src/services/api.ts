@@ -249,6 +249,10 @@ async getDadosUsuario(id: number) {
 
     return this.handleResponse<{ mensagem: string }>(response);
   }
+  async listarUsuarios() {
+    const response = await fetch(`${this.baseUrl}/admin/usuarios`);
+    return this.handleResponse<any[]>(response);
+  }
 }
 
 export const api = new ApiService();

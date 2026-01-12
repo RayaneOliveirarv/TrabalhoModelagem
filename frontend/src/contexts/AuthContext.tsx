@@ -145,6 +145,10 @@ export const getUserData = async() => {
 
   localStorage.setItem("user_data", JSON.stringify(dados_res));
 }
+export const listarUsuarios = async() => {
+  const response = await api.listarUsuarios();
+  return response
+}
 export const useAuth = () => {
   const context = useContext(AuthContext);
 
