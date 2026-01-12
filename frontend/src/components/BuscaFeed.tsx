@@ -1,5 +1,6 @@
 import React from 'react';
 import '../styles/BuscaFeed/BuscaFeed.css';
+import { FaSearch } from 'react-icons/fa';
 
 // Definimos o que o componente espera receber
 interface BuscaFeedProps {
@@ -16,11 +17,11 @@ const BuscaFeed: React.FC<BuscaFeedProps> = ({ onSearch }) => {
         placeholder="Busca por especie, Localização"
       />
       
-      <button onClick={() => {
+      <button style={{border: 'none', background: 'transparent', display: 'flex'}} onClick={() => {
         const valor = (document.getElementById('input-busca') as HTMLInputElement).value;
         onSearch(valor);
       }}>
-        🔍
+        <FaSearch className='navbar-icon' ></FaSearch>
       </button>
     </div>
   );
