@@ -49,6 +49,23 @@ class ApiService {
 
   // ==================== USUÁRIOS ====================
   //  Endpoint para cadastrar novo usuário
+
+async atualizarSenha(dados: {
+  usuarioId: number | undefined;
+  senhaAtual: string;
+  novaSenha: string;
+}) {
+  const response = await fetch(`${this.baseUrl}/usuarios/alterar-senha`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(dados),
+  });
+
+  return this.handleResponse<{ mensagem: string }>(response);
+}
+
   async cadastrarUsuario(dados: {
     nome: string;
     email: string;

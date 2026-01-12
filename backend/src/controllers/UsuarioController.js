@@ -99,3 +99,15 @@ export const deletarUsuario = async (req, res) => {
     res.status(500).json({ erro: err.message });
   }
 };
+
+export const alterarSenha = async (req, res) => {
+    const { usuarioId, senhaAtual, novaSenha } = req.body;
+
+    try {
+        await UsuarioService.alterarSenha(usuarioId, senhaAtual, novaSenha);
+        res.json({ mensagem: "Senha alterada com sucesso!" });
+    } catch (err) {
+        const status = err.message === "Senha atual incorreta" ? 401 : 500;
+        res.status(status).json({ erro: err.message });
+    }
+};

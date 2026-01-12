@@ -158,3 +158,27 @@ input.conf-Input_p:focus {
 .conf-fade{
   opacity: 0.5;
 }
+
+.conf-alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    border: 1px solid transparent;
+}
+
+/* Estilo para ERRO (Vermelho) */
+.conf-alert-error {
+    background-color: #fde2e2;
+    color: #c0392b;
+    border-color: #f9acaa;
+}
+
+/* Estilo para SUCESSO (Verde) */
+.conf-alert-success {
+    background-color: #e2f9e1;
+    color: #27ae60;
+    border-color: #b7e9b5;
+}
