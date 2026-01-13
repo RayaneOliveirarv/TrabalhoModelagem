@@ -71,7 +71,7 @@ const Perfil_Post_View : React.FC<PerfilPostViewProps> = (props) => {
                 {Post_Status()}
                 <button className="perf-dots"><RxDotsHorizontal style={{fontSize:"1.5em"}} onClick={()=>show_manage()}/></button>
             </div>
-            {showManage && <GerenciarPost setShowManage={setShowManage}/>}
+            {showManage && <GerenciarPost setShowManage={setShowManage} animalId={props.id}/>}
         </div>
     )
 }
