@@ -9,7 +9,7 @@ import NavbarFeed from '../components/NavbarFeed';
 import NovoPostButton from '../components/NovoPostButton';
 import PostModal from '../components/PostModal';
 import type { PostData } from '../components/PostModal';
-import { FaHeart, FaComment, FaStar, FaMapMarkerAlt, FaTrash } from 'react-icons/fa';
+import { FaHeart, FaComment, FaStar, FaMapMarkerAlt } from 'react-icons/fa';
 import '../styles/Feed/Feed.css';
 
 const Feed: React.FC = () => {
@@ -128,26 +128,7 @@ const handleFilterCategory = (categoria: string) => {
     }
   };
 
-  // Função para excluir animal
-  const handleDeleteAnimal = async (animalId: number) => {
-    if (!user?.id) {
-      setError('Você precisa estar logado para excluir um animal.');
-      return;
-    }
 
-    if (!window.confirm('Tem certeza que deseja excluir este animal?')) {
-      return;
-    }
-
-    try {
-      await api.deletarAnimal(animalId, user.id);
-      setPostSuccess('Animal excluído com sucesso!');
-      const novosAnimais = await api.listarAnimais();
-      setAnimais(novosAnimais);
-    } catch (err: any) {
-      setError('Erro ao excluir animal: ' + (err.message || ''));
-    }
-  };
 
   return (
     <div className="feed-page">
@@ -222,16 +203,6 @@ const handleFilterCategory = (categoria: string) => {
                 <button className="feed-card-action-btn favorite">
                   <FaStar size={16} />
                 </button>
-                
-                {user && (animal.ong_id === user.id || animal.protetor_id === user.id) && (
-                  <button 
-                    className="feed-card-action-btn delete" 
-                    onClick={() => handleDeleteAnimal(animal.id)}
-                    title="Excluir animal"
-                  >
-                    <FaTrash size={16} />
-                  </button>
-                )}
               </div>
             </div>
           ))}
