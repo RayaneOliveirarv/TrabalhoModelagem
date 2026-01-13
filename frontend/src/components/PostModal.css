@@ -96,6 +96,25 @@
 
 .post-modal input[type="file"] {
   margin-top: 4px;
+  font-size: 0.9rem;
+}
+
+.file-name {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: #667eea;
+  font-weight: 500;
+}
+
+.perdido-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 12px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  border-left: 3px solid #667eea;
 }
 
 .submit-btn {
@@ -103,17 +122,21 @@
   color: #fff;
   border: none;
   border-radius: 8px;
-  padding: 10px 0;
+  padding: 12px 0;
   font-size: 1.05rem;
   font-weight: 600;
   cursor: pointer;
   margin-top: 8px;
   box-shadow: 0 2px 8px #b2ebf244;
-  transition: background 0.2s, box-shadow 0.2s;
+  transition: all 0.2s;
 }
 .submit-btn:hover {
   background: linear-gradient(90deg, #764ba2 0%, #667eea 100%);
   box-shadow: 0 4px 16px #667eea33;
+  transform: translateY(-1px);
+}
+.submit-btn:active {
+  transform: translateY(0);
 }
 
 @media (max-width: 600px) {
