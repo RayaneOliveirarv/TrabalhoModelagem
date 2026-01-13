@@ -150,13 +150,30 @@ div.perf-GerenciarPost{
     position: absolute;
     display: block;
     background-color: #fff;
-    width: 40%;
-    height: 85%;
-    top: 5%;
-    left: 30%;
+    width: 90%;
+    max-width: 500px;
+    height: auto;
+    max-height: 85vh;
+    overflow-y: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     z-index: 1;
-    padding: 2em;
-    border-radius: 2em;
+    padding: 28px 24px 24px 24px;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+    animation: popIn 0.22s cubic-bezier(.4,2,.6,1);
+}
+
+@keyframes popIn {
+    from { 
+        transform: translate(-50%, -50%) scale(0.95); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translate(-50%, -50%) scale(1); 
+        opacity: 1; 
+    }
 }
 
 div.perf-Post_Status.lost{
@@ -192,64 +209,115 @@ img.perf-post_view{
 
 button.perf-dots{
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: center;
   background-color: transparent;
   border: none;
-  font-size: 1.5em;
+  font-size: 2rem;
+  color: #667eea;
   margin: 0;
   cursor: pointer;
-  height: 1.5em;
-  width: 1.5em;
+  height: 2em;
+  width: 2em;
+  transition: color 0.2s, transform 0.2s;
+}
+
+button.perf-dots:hover {
+  color: #764ba2;
+  transform: scale(1.1);
+}
+
+button.perf-dots:active {
+  transform: scale(0.95);
 }
 
 button.perf-Button{
   background-color: black;
   color: #fff;
-  border-radius: 2em;
-  padding: 1em;
-  width: 35%;
-  height: 8%;
-  font-size: 1em;
+  border-radius: 8px;
+  padding: 12px 0;
+  width: 48%;
+  font-size: 1.05rem;
+  font-weight: 600;
   margin: auto;
   border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+button.perf-Button:hover {
+  cursor: pointer;
+  background-color: #333;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+button.perf-Button:active {
+  transform: translateY(0);
 }
 
 button.perf-red{
-  background-color: red;
+  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
 }
 
-button:hover{
-  cursor:pointer;
-  background-color:gray ;
-}
-button:active{
-  background-color: #fff;
-  color: #000;
+button.perf-red:hover {
+  background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%);
 }
 
 input.perf-Input_p{
-  border-radius: 10px;
-  padding: 10px;
-  width: 97%;
-  background-color: #bdbdbd;
+  border: 1.5px solid #e0e7ff;
+  border-radius: 8px;
+  padding: 10px 12px;
+  width: 100%;
+  background-color: #f8fafc;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border 0.2s;
+  box-sizing: border-box;
 }
 
-
+input.perf-Input_p:focus {
+  border: 1.5px solid #667eea;
+  outline: none;
+  background-color: #fff;
+}
 
 select.perf-select_p{
-  border-radius: 10px;
-  padding: 10px;
+  border: 1.5px solid #e0e7ff;
+  border-radius: 8px;
+  padding: 10px 12px;
   width: 100%;
-  background-color: #bdbdbd;
-  border: none;
+  background-color: #f8fafc;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border 0.2s;
+  cursor: pointer;
+}
+
+select.perf-select_p:focus {
+  border: 1.5px solid #667eea;
+  outline: none;
+  background-color: #fff;
 }
 
 textarea.perf-textarea_p{
-  border-radius: 10px;
-  padding: 10px;
-  background-color: #bdbdbd;
-  resize:none;
+  border: 1.5px solid #e0e7ff;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background-color: #f8fafc;
+  resize: none;
+  width: 100%;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border 0.2s;
+  box-sizing: border-box;
+}
+
+textarea.perf-textarea_p:focus {
+  border: 1.5px solid #667eea;
+  outline: none;
+  background-color: #fff;
 }
 
 p.perf-User-text{
@@ -313,4 +381,45 @@ p.perf-small{
     background: linear-gradient(90deg, #667eea 0%, #a1c4fd 100%);
     color: #fff;
     box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+}
+
+.Input_Container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.Input_Container label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Media queries para responsividade do GerenciarPost */
+@media (max-width: 768px) {
+    div.perf-GerenciarPost {
+        width: 95%;
+        max-width: 95%;
+        padding: 24px 20px;
+    }
+
+    button.perf-Button {
+        font-size: 1rem;
+        padding: 10px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    div.perf-GerenciarPost h2 {
+        font-size: 1.1rem;
+    }
+
+    .perf-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    button.perf-Button {
+        width: 100%;
+    }
 }
