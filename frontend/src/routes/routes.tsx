@@ -9,7 +9,10 @@ import Feed from '../pages/Feed';
 import Configuracoes from '../pages/Configuracoes';
 import Perfil_page from '../pages/Perfil_page';
 import Adocao from '../pages/Adocao';
+import AdminPage from '../pages/AdminPage';
 import ResultadosBusca from '../pages/ResultadosBusca';
+
+// NOVO: Import do componente de rota protegida
 
 import ProtectedRoute from '../components/ProtectedRoute';
 
@@ -77,10 +80,10 @@ const AppRoutes: React.FC = () => {
           } 
         />
         <Route 
-          path="/busca" 
+          path="/admin" 
           element={
             <ProtectedRoute>
-              <ResultadosBusca />
+              <AdminPage />
             </ProtectedRoute>
           } 
         />

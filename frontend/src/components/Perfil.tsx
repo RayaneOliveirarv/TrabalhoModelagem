@@ -36,7 +36,8 @@ const Perfil: React.FC = ()=>{
                 nome: nome + (sobrenome ? ` ${sobrenome}` : ''),
                 telefone,
                 cidade,
-                estado
+                estado,
+                email
             };
 
             await api.atualizarPerfil(user.id, user.tipo, dados);

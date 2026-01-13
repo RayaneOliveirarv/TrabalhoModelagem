@@ -19,6 +19,8 @@ const Perfil_page = ()=>{
     const [userProfile, setUserProfile] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [animaisCount, setAnimaisCount] = useState(0);
+    const [active_Screen, setActiveScreen] = useState("MeusPosts");
+    const [screen_element, setScreen_element] = useState<any>(<MeusPosts/>);
 
     useEffect(() => {
         const carregarPerfil = async () => {
@@ -50,8 +52,6 @@ const Perfil_page = ()=>{
         carregarPerfil();
     }, [user]);
 
-    const [active_Screen, setActiveScreen] = useState("MeusPosts")
-    const [screen_element, setScreen_element] = useState<any>(<MeusPosts/>)
     const Screens = 
         [
         {name:"MeusPosts",component:<MeusPosts/>},
@@ -76,6 +76,7 @@ const Perfil_page = ()=>{
             </div>
         )
     }
+
     return(
     <div className="perf-Perfil">
         <NavbarPrincipal/>

@@ -119,6 +119,11 @@ export const UsuarioService = {
   async deletarConta(id) {
     return await UsuarioModel.excluir(id);
   },
+  
+  async getDadosUsuario(id){
+    return await UsuarioModel.buscar_dados(id);
+  },
+
 
  async alterarSenha(usuarioId, senhaAtual, novaSenha) {
         return new Promise((resolve, reject) => {

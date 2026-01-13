@@ -4,7 +4,8 @@ import {
   loginUsuario, 
   atualizarUsuario, 
   deletarUsuario,
-  enviarDocumentacao,
+  enviarDocumentacao ,
+  getDadosUsuario,
   alterarSenha 
 } from "../controllers/UsuarioController.js";
 import { denunciarUsuario } from "../controllers/DenunciaUsuarioController.js";
@@ -14,6 +15,7 @@ import { NotificacaoModel } from "../models/NotificacaoModel.js"; // Importaçã
 const router = express.Router();
 
 // --- 1. Rotas de Gerenciamento de Conta ---
+router.get("/:id/dados", getDadosUsuario);
 router.post("/cadastrar", cadastrarUsuario);
 router.post("/login", loginUsuario);
 router.put("/perfil/:id", atualizarUsuario);
