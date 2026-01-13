@@ -1,5 +1,6 @@
 import { UsuarioModel } from "../models/UsuarioModel.js";
 import db from "../config/db.js"; 
+import { alterarSenha } from "../controllers/UsuarioController.js";
 
 export const UsuarioService = {
   /**
@@ -121,5 +122,28 @@ export const UsuarioService = {
   
   async getDadosUsuario(id){
     return await UsuarioModel.buscar_dados(id);
-  }
+  },
+
+
+ async alterarSenha(usuarioId, senhaAtual, novaSenha) {
+        return new Promise((resolve, reject) => {
+            const sqlBusca = "SELECT senha FROM usuarios WHERE id = ?";
+            
+            db.query(sqlBusca, [usuarioId], (err, results) => {
+                if (err) return reject(new Error("Erro no banco de dados."));
+                if (results.length === 0) return reject(new Error("Usuário não encontrado."));
+
+                if (senhaAtual !== results[0].senha) {
+                    return reject(new Error("Senha atual incorreta"));
+                }
+
+                const sqlUpdate = "UPDATE usuarios SET senha = ? WHERE id = ?";
+                db.query(sqlUpdate, [novaSenha, usuarioId], (errUpdate) => {
+                    if (errUpdate) return reject(new Error("Erro ao atualizar senha."));
+                    resolve(true);
+                });
+            });
+        });
+    }
+
 };

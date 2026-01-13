@@ -1,5 +1,5 @@
 // ============================================
-// NOVO: Context de Autenticação Global
+// Context de Autenticação Global
 // Gerencia estado do usuário logado em toda aplicação
 // ============================================
 
@@ -16,7 +16,7 @@ interface User {
   nome?: string;
 }
 
-// NOVO: Interface dos dados disponíveis no contexto
+//  Interface dos dados disponíveis no contexto
 interface AuthContextData {
   user: User | null;
   loading: boolean;
@@ -26,19 +26,19 @@ interface AuthContextData {
   updateUser: (userData: Partial<User>) => void;
 }
 
-// NOVO: Criação do contexto
+//  Criação do contexto
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-// NOVO: Provider que envolve a aplicação
+//  Provider que envolve a aplicação
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // NOVO: Carrega o usuário do localStorage ao iniciar (persistência)
+  //  Carrega o usuário do localStorage ao iniciar (persistência)
   useEffect(() => {
     const storedUser = localStorage.getItem('@olpet:user');
     
@@ -55,12 +55,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setLoading(false);
   }, []);
 
-  // NOVO: Função de login - chama API e salva no localStorage
+  //  Função de login - chama API e salva no localStorage
   const login = async (email: string, senha: string) => {
     try {
       const response = await api.login(email, senha);
       
-      // NOVO: Valida se a conta está ativa antes de permitir login
+      //  Valida se a conta está ativa antes de permitir login
       if (response.status_conta.toLowerCase() === 'bloqueado') {
         throw new Error('Sua conta está bloqueada. Entre em contato com o administrador.');
       }
@@ -83,13 +83,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // NOVO: Função de logout - remove dados do localStorage
+  //  Função de logout - remove dados do localStorage
   const logout = () => {
     setUser(null);
     localStorage.removeItem('@olpet:user');
   };
 
-  // NOVO: Atualiza dados do usuário (útil para edição de perfil)
+  // Atualiza dados do usuário (útil para edição de perfil)
   const updateUser = async (userData: Partial<User>) => {
     if (user) {
       const updatedUser = { ...user, ...userData };
@@ -122,7 +122,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-// NOVO: Hook customizado para usar o contexto de autenticação
+//  Hook customizado para usar o contexto de autenticação
 };
 
 export const getUserData = async() => {

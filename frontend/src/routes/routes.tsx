@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-// NOVO: Import do hook de autenticação para verificar se está logado
 import { useAuth } from '../contexts/AuthContext';
 import Login from '../pages/Login';
 import Cadastro from '../pages/Cadastro';
@@ -16,19 +15,19 @@ import AdminPage from '../pages/AdminPage';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 const AppRoutes: React.FC = () => {
-  // NOVO: Verifica se usuário está autenticado
+  // Verifica se usuário está autenticado
   const { isAuthenticated } = useAuth();
 
   return (
     <Router>
       <Routes>
-        {/* NOVO: Redireciona para feed se já estiver logado */}
+        {/* Redireciona para feed se já estiver logado */}
         <Route 
           path="/" 
           element={isAuthenticated ? <Navigate to="/feed" replace /> : <Login />} 
         />
         <Route path="/cadastro" element={<Cadastro />} />
-        {/* NOVO: Rota protegida - apenas usuários autenticados */}
+        {/* Rota protegida - apenas usuários autenticados */}
         <Route 
           path="/alterarCadastro" 
           element={
@@ -37,7 +36,7 @@ const AppRoutes: React.FC = () => {
             </ProtectedRoute>
           } 
         />
-        {/* NOVO: Rota protegida - apenas ONG e PROTETOR podem acessar */}
+        {/* Rota protegida - apenas ONG e PROTETOR podem acessar */}
         <Route 
           path="/alterar-conta-ong" 
           element={

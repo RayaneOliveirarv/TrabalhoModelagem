@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// NOVO: Import do hook de autenticação para gerenciar login
 import { useAuth } from '../contexts/AuthContext';
-// NOVO: Import das funções de validação customizadas
 import { validateEmail, validatePassword } from '../utils/validation';
 import '../styles/Login/Login.css'
 
@@ -10,12 +8,12 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  // NOVO: Estado para armazenar erros de validação específicos
+  //  Estado para armazenar erros de validação específicos
   const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
-  // NOVO: Estado de loading para mostrar feedback durante requisição
+  // Estado de loading para mostrar feedback durante requisição
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  // NOVO: Hook de autenticação que conecta com a API
+  // Hook de autenticação que conecta com a API
   const { login } = useAuth();
 
   return (
@@ -42,11 +40,11 @@ const Login: React.FC = () => {
       <div className="login-card">
         <h3>LOGIN</h3>
         <p className="login-card-subtitle">Junte-se a nós e ajude a salvar vidas</p>
-        {/* NOVO: Formulário com validação em tempo real e integração com API */}
+        {/* Formulário com validação em tempo real e integração com API */}
         <form onSubmit={async (e) => {
           e.preventDefault();
           
-          // NOVO: Validações usando funções customizadas
+          //  Validações usando funções customizadas
           const emailError = validateEmail(email);
           const passwordError = validatePassword(password);
           
@@ -59,17 +57,17 @@ const Login: React.FC = () => {
           setLoading(true);
           
           try {
-            // NOVO: Chama API de login através do AuthContext
+            // Chama API de login através do AuthContext
             await login(email, password);
             navigate('/feed');
           } catch (error: any) {
-            // NOVO: Captura e exibe erro da API
+            //  Captura e exibe erro da API
             setErrors({ general: error.message || 'Erro ao fazer login. Verifique suas credenciais.' });
           } finally {
             setLoading(false);
           }
         }}>
-          {/* NOVO: Exibe erro geral retornado pela API (ex: conta bloqueada) */}
+          {/* Exibe erro geral retornado pela API (ex: conta bloqueada) */}
           {errors.general && (
             <div style={{ color: '#d32f2f', marginBottom: '16px', padding: '12px', backgroundColor: '#ffebee', borderRadius: '4px', fontSize: '14px' }}>
               {errors.general}

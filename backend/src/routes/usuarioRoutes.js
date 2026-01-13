@@ -5,7 +5,8 @@ import {
   atualizarUsuario, 
   deletarUsuario,
   enviarDocumentacao ,
-  getDadosUsuario
+  getDadosUsuario,
+  alterarSenha 
 } from "../controllers/UsuarioController.js";
 import { denunciarUsuario } from "../controllers/DenunciaUsuarioController.js";
 import { uploadDocumento } from "../config/multer.js";
@@ -19,6 +20,8 @@ router.post("/cadastrar", cadastrarUsuario);
 router.post("/login", loginUsuario);
 router.put("/perfil/:id", atualizarUsuario);
 router.delete("/excluir/:id", deletarUsuario);
+router.post('/alterar-senha', alterarSenha);
+
 // --- 2. RF03: Envio de Documentação (ONGs e Protetores) ---
 /**
  * @route   PUT /usuarios/enviar-documentacao/:id

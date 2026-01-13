@@ -1,19 +1,19 @@
 
-.cadastro-bg {
+.cadastro-bg, .login-bg {
   min-height: 100vh;
   width: 100vw;
   background: linear-gradient(120deg, #f8fafc 0%, #e0f7fa 50%, #fce4ec 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 0;
+  justify-content: flex-start;
+  padding: 20px;
   box-sizing: border-box;
   overflow-x: hidden;
   overflow-y: auto;
 }
 
-.cadastro-container {
+.cadastro-container, .login-container {
   background: #fff;
   border-radius: 28px;
   box-shadow: 0 8px 32px 0 #f8bbd044, 0 2px 8px #b2ebf244;
@@ -26,7 +26,7 @@
   border: 2.5px solid #b2ebf2;
 }
 
-.cadastro-logo {
+.cadastro-logo, .login-logo {
   width: 120px;
   height: 120px;
   background: linear-gradient(135deg, #fff 60%, #e1bee7 100%);
@@ -42,7 +42,7 @@
   color: #ab47bc;
   letter-spacing: 1px;
 }
-.cadastro-title {
+.cadastro-title, .login-title {
   font-size: 2.2rem;
   font-weight: 900;
   margin-bottom: 4px;
@@ -51,7 +51,7 @@
   font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
   text-shadow: 0 2px 8px #fce4ec88;
 }
-.cadastro-subtitle {
+.cadastro-subtitle, .login-subtitle {
   color: #00838f;
   font-size: 1.1rem;
   margin-bottom: 22px;
@@ -59,7 +59,7 @@
   font-weight: 600;
   letter-spacing: 0.5px;
 }
-.cadastro-tabs {
+.cadastro-tabs, .login-tabs {
   display: flex;
   gap: 0;
   background: #fff;
@@ -68,7 +68,7 @@
   box-shadow: 0 4px 16px #f8bbd044;
   margin-bottom: 22px;
 }
-.cadastro-tabs button {
+.cadastro-tabs button, .login-tabs button {
   border: none;
   outline: none;
   background: none;
@@ -81,26 +81,27 @@
   font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
   letter-spacing: 0.5px;
 }
-.cadastro-tabs button.active {
+.cadastro-tabs button.active, .login-tabs button.active {
   background: linear-gradient(90deg, #b2ebf2 0%, #fce4ec 100%);
   color: #00838f;
   box-shadow: 0 2px 12px #f8bbd044;
 }
 
-.cadastro-card {
+.cadastro-card, .login-card {
   background: #fff;
   border-radius: 28px;
   box-shadow: 0 8px 32px 0 #f8bbd044, 0 2px 8px #b2ebf244;
-  padding: 44px 36px 32px 36px;
+  padding: 32px 36px;
   min-width: 340px;
   max-width: 95vw;
   display: flex;
   flex-direction: column;
   align-items: center;
   border: 2.5px solid #b2ebf2;
+  margin-bottom: 20px;
 }
 
-.cadastro-form {
+.cadastro-form, .login-form {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -118,7 +119,7 @@
   text-align: center;
 }
 
-.cadastro-card-subtitle {
+.cadastro-card-subtitle, .login-card-subtitle {
   color: #00838f;
   font-size: 1.05rem;
   margin-bottom: 18px;
@@ -126,7 +127,7 @@
   font-weight: 600;
 }
 
-.cadastro-form label {
+.cadastro-form label, .login-form label {
   font-size: 1.01rem;
   font-weight: 700;
   color: #ab47bc;
@@ -147,7 +148,10 @@
 
 .cadastro-form input[type="email"],
 .cadastro-form input[type="password"],
-.cadastro-form input[type="text"] {
+.cadastro-form input[type="text"],
+.login-form input[type="email"],
+.login-form input[type="password"],
+.login-form input[type="text"] {
   width: 100%;
   padding: 12px 40px 12px 14px;
   border: 1.5px solid #b2ebf2;
@@ -162,7 +166,10 @@
 }
 .cadastro-form input[type="email"]:focus,
 .cadastro-form input[type="password"]:focus,
-.cadastro-form input[type="text"]:focus {
+.cadastro-form input[type="text"]:focus,
+.login-form input[type="email"]:focus,
+.login-form input[type="password"]:focus,
+.login-form input[type="text"]:focus {
   border: 1.5px solid #ab47bc;
   background: #fff;
   box-shadow: 0 2px 8px #fce4ec44;
@@ -182,7 +189,7 @@
   transform: translateY(-50%) scale(1.15);
 }
 
-.cadastro-btn {
+.cadastro-btn, .login-btn {
   width: 100%;
   padding: 12px 0;
   background: linear-gradient(90deg, #b2ebf2 0%, #fce4ec 100%);
@@ -197,19 +204,18 @@
   opacity: 1;
   transition: background 0.2s, box-shadow 0.2s;
   font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
-  box-shadow: 0 2px 12px #f8bbd044;
 }
-.cadastro-btn:hover {
+.cadastro-btn:hover, .login-btn:hover {
   background: linear-gradient(90deg, #ab47bc 0%, #b2ebf2 100%);
 }
 
-.cadastro-footer {
+.cadastro-footer, .login-footer {
   width: 100%;
   display: flex;
   justify-content: flex-end;
   margin-top: 2px;
 }
-.cadastro-footer a {
+.cadastro-footer a, .login-footer a {
   color: #00838f;
   font-size: 1rem;
   text-decoration: none;
@@ -218,78 +224,76 @@
   font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
   letter-spacing: 0.2px;
 }
-.cadastro-footer a:hover {
+.cadastro-footer a:hover, .login-footer a:hover {
   color: #ab47bc;
 }
 
 @media (min-width: 900px) {
-  .cadastro-bg {
+  .cadastro-bg, .login-bg {
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     min-height: 100vh;
     min-width: 100vw;
     width: 100vw;
-    height: 100vh;
-    padding: 0;
+    padding: 40px 20px;
     box-sizing: border-box;
-    overflow: hidden;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
-  .cadastro-header {
+  .cadastro-header, .login-header {
     margin-bottom: 32px;
+    flex-shrink: 0;
   }
-  .cadastro-card {
+  .cadastro-card, .login-card {
     min-width: 400px;
     max-width: 420px;
-    padding: 56px 56px 40px 56px;
+    padding: 40px 48px;
     border-radius: 32px;
+    margin-bottom: 40px;
+    flex-shrink: 0;
   }
 }
 
 @media (max-width: 600px) {
-  .cadastro-bg {
-    padding-top: 16px;
+  .cadastro-bg, .login-bg {
+    padding: 16px 8px;
   }
-  .cadastro-header {
+  .cadastro-header, .login-header {
     margin-bottom: 16px;
   }
-  .cadastro-logo {
+  .cadastro-logo, .login-logo {
     width: 90px;
     height: 90px;
     font-size: 1.1rem;
   }
-  .cadastro-title {
+  .cadastro-title, .login-title {
     font-size: 1.2rem;
   }
-  .cadastro-card {
+  .cadastro-card, .login-card {
     min-width: unset;
-    width: 98vw;
-    max-width: 99vw;
-    padding: 18px 6px 14px 6px;
+    width: 95vw;
+    max-width: 95vw;
+    padding: 20px 16px;
     border-radius: 14px;
   }
   .cadastro-form-title {
     font-size: 1.05rem;
   }
-  .cadastro-card-subtitle {
+  .cadastro-card-subtitle, .login-card-subtitle {
     font-size: 0.93rem;
   }
-  .cadastro-form {
-    gap: 7px;
+  .cadastro-form, .login-form {
+    gap: 10px;
   }
-  .cadastro-form label {
+  .cadastro-form label, .login-form label {
     font-size: 0.93rem;
   }
-  .cadastro-btn {
+  .cadastro-btn, .login-btn {
     font-size: 0.97rem;
-    padding: 8px 0;
+    padding: 10px 0;
   }
-  .cadastro-footer a {
+  .cadastro-footer a, .login-footer a {
     font-size: 0.93rem;
   }
 }

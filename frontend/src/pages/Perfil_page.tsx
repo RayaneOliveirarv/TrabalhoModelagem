@@ -1,4 +1,6 @@
-import { use, useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import api from "../services/api";
 
 import { FaMapPin } from "react-icons/fa";
 import { FaCalendarAlt } from "react-icons/fa";
@@ -12,33 +14,47 @@ import template from "../assets/img/template_image.jpg";
 import NavbarPrincipal from "../components/NavbarPrincipal";
 import "../styles/Perfil_Page/Perf-style.css";
 
-import { getUserData } from "../contexts/AuthContext";
-import { useEffect } from "react";
 const Perfil_page = ()=>{
-    const [user_Data, setUser_Data] = useState<UserProfileData>();
-    const [active_Screen, setActiveScreen] = useState<string>()
-    const [screen_element, setScreen_element] = useState<any>()
+    const { user } = useAuth();
+    const [userProfile, setUserProfile] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [animaisCount, setAnimaisCount] = useState(0);
+    const [active_Screen, setActiveScreen] = useState("MeusPosts");
+    const [screen_element, setScreen_element] = useState<any>(<MeusPosts/>);
 
-
-    interface UserProfileData {
-        email: string;
-        tipo: 'ADOTANTE' | 'PROTETOR' | 'ONG';
-        // Campos de Adotante
-        nome?:  string;
-        adotante_cpf?: string;
-        // Campos de Protetor
-        protetor_cpf?: string;
-        protetor_contato?: string;
-        protetor_localizacao?: string;
-        // Campos de ONG
-        ong_razao_social?: string;
-        ong_cnpj?: string;
-        ong_localizacao?: string;
-        }
+    useEffect(() => {
+        const carregarPerfil = async () => {
+            if (!user) return;
+            
+            try {
+                setLoading(true);
+                // Busca animais do usuário
+                const animais = await api.listarAnimais();
+                const meusAnimais = animais.filter((animal: any) => 
+                    animal.ong_id === user.id || animal.protetor_id === user.id
+                );
+                setAnimaisCount(meusAnimais.length);
+                
+                // Define os dados do perfil
+                setUserProfile({
+                    nome: user.email?.split('@')[0] || 'Usuário',
+                    email: user.email,
+                    tipo: user.tipo,
+                    dataCriacao: new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+                });
+            } catch (err) {
+                console.error('Erro ao carregar perfil:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        carregarPerfil();
+    }, [user]);
 
     const Screens = 
         [
-        {name:"MeusPosts",component:<MeusPosts nome={user_Data?.nome ?? ""} email={user_Data?.email ?? ""} data_post="" status=""/>},
+        {name:"MeusPosts",component:<MeusPosts/>},
         {name:"Favoritos",component:<Favoritos/>},
         ]
     const choose_screen = (Screen:string)=>{
@@ -60,36 +76,6 @@ const Perfil_page = ()=>{
             </div>
         )
     }
-    const loadUserData = async () => {
-            try{
-                const cachedData = localStorage.getItem("user_data");
-                
-                if (cachedData) {
-                    setUser_Data(JSON.parse(cachedData)[0]);
-                    return;
-                } 
-
-                await getUserData();
-                const userData = localStorage.getItem("user_data");
-                setUser_Data(userData ? JSON.parse(userData) : null);
-                }
-            catch(err){
-                console.log(err)
-            }
-        }
-        
-    useEffect(()=>{
-        loadUserData();
-    }
-    ,[])
-    const teste = async ()=>{
-        await getUserData();
-        const userData = localStorage.getItem("user_data");
-        setUser_Data(userData ? JSON.parse(userData) : null);
-
-        console.log(localStorage.getItem("@olpet:user"))
-        console.log("user data ",user_Data)
-    }
 
     return(
     <div className="perf-Perfil">
@@ -100,15 +86,23 @@ const Perfil_page = ()=>{
                     <div className="perf-row">
                         <img src={template} className="perf-user_photo" alt="User profile photo"/>
                         <div className="perf-column_start">
-                            <p className="perf-User-text"><b>{user_Data?.nome}</b></p>
-                            <p className="perf-User-text">{user_Data?.email}</p>
-                            <div className="perf-row">
-                                <p className="perf-User-text"><FaMapPin/>TODO</p>
-                                <p className="perf-User-text"><FaCalendarAlt/>TODO</p>
-                            </div>
-                            <div className="perf-row perf-userTags">
-
-                            </div>
+                            {loading ? (
+                                <p className="perf-User-text">Carregando...</p>
+                            ) : (
+                                <>
+                                    <p className="perf-User-text"><b>{userProfile?.nome || 'Usuário'}</b></p>
+                                    <p className="perf-User-text">{userProfile?.email || 'email@gmail.com'}</p>
+                                    <div className="perf-row">
+                                        <p className="perf-User-text"><FaMapPin/> Brasil</p>
+                                        <p className="perf-User-text"><FaCalendarAlt/> Membro desde {userProfile?.dataCriacao || 'Janeiro 2026'}</p>
+                                    </div>
+                                    <div className="perf-row perf-userTags">
+                                        <span style={{background: '#667eea', color: 'white', padding: '4px 12px', borderRadius: '12px', fontSize: '12px'}}>
+                                            {userProfile?.tipo || 'ADOTANTE'}
+                                        </span>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
 
@@ -117,25 +111,24 @@ const Perfil_page = ()=>{
                     <div className="perf-user_awards">
                         <div className="perf-award_item">
                             <FaPaw/>
-                            <p className="perf-center-text">N</p> 
-                            <p className="perf-center-text">TODO</p>
+                            <p className="perf-center-text">{animaisCount}</p> 
+                            <p className="perf-center-text">Posts</p>
                         </div>
                         <div className="perf-award_item">
                             <FaRegHeart/>
-                            <p className="perf-center-text">N</p> 
-                            <p className="perf-center-text">TODO</p>
+                            <p className="perf-center-text">0</p> 
+                            <p className="perf-center-text">Ajudas</p>
                         </div>
                         <div className="perf-award_item">
                             <FaAward/>
-                            <p className="perf-center-text">N</p> 
-                            <p className="perf-center-text">TODO</p>
+                            <p className="perf-center-text">0</p> 
+                            <p className="perf-center-text">Adoções</p>
                         </div>
                     </div>
                 </div>
                 <div className="perf-center">
                 {screen_selector()}
                 </div>
-                <button onClick={()=>teste()}>teste</button>
                 <div className="perf-Selected_content">
                 {screen_element}
                 </div>

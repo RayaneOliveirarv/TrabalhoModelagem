@@ -1,5 +1,5 @@
 // ============================================
-// NOVO: Serviço centralizado de API
+//  Serviço centralizado de API
 // Gerencia todas as chamadas HTTP ao backend
 // ============================================
 
@@ -10,7 +10,7 @@ interface ApiError {
   message?: string;
 }
 
-// NOVO: Classe ApiService para encapsular chamadas à API
+// Classe ApiService para encapsular chamadas à API
 class ApiService {
   private baseUrl: string;
 
@@ -18,7 +18,7 @@ class ApiService {
     this.baseUrl = baseUrl;
   }
 
-  // NOVO: Método privado para tratar respostas HTTP e erros
+  // Método privado para tratar respostas HTTP e erros
   private async handleResponse<T>(response: Response): Promise<T> {
     // Verifica se a resposta tem conteúdo antes de tentar fazer parse
     const text = await response.text();
@@ -50,7 +50,24 @@ class ApiService {
   }
 
   // ==================== USUÁRIOS ====================
-  // NOVO: Endpoint para cadastrar novo usuário
+  //  Endpoint para cadastrar novo usuário
+
+async atualizarSenha(dados: {
+  usuarioId: number | undefined;
+  senhaAtual: string;
+  novaSenha: string;
+}) {
+  const response = await fetch(`${this.baseUrl}/usuarios/alterar-senha`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(dados),
+  });
+
+  return this.handleResponse<{ mensagem: string }>(response);
+}
+
   async cadastrarUsuario(dados: {
     nome: string;
     email: string;
@@ -71,7 +88,7 @@ class ApiService {
     return this.handleResponse<{ mensagem: string; usuarioId: number }>(response);
   }
 
-  // NOVO: Endpoint para fazer login
+  // Endpoint para fazer login
   async login(email: string, senha: string) {
     const response = await fetch(`${this.baseUrl}/usuarios/login`, {
       method: 'POST',
