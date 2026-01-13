@@ -99,6 +99,7 @@ const BuscaFeed = ({ onBuscar }: { onBuscar?: (buscaLimpa: Record<string, string
                   <option value="">Todas</option>
                   <option value="Adocao">Adoção</option>
                   <option value="Perdido">Perdido</option>
+                  <option value="Encontrado">Encontrado</option>
                 </select>
               </div>
               
@@ -109,8 +110,9 @@ const BuscaFeed = ({ onBuscar }: { onBuscar?: (buscaLimpa: Record<string, string
                   onChange={(e) => handleFiltroChange('especie', e.target.value)}
                 >
                   <option value="">Todas</option>
-                  <option value="Cachorro">Cachorro</option>
+                  <option value="Cao">Cachorro</option>
                   <option value="Gato">Gato</option>
+                  <option value="Ave">Ave</option>
                   <option value="Outro">Outro</option>
                 </select>
               </div>
