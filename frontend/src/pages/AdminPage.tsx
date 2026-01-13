@@ -13,7 +13,13 @@ export default function AdminPage(){
     const ListUserItem = (user:any)=>{
         return(
             <div className="user_item">
-                <p>id: {user.id} | email: {user.email} | <button onClick={()=>desativar_conta()}>status: {user.status_conta}</button></p>
+                <p>
+                    <span className="admin-user_data">ID de usuário: {user.id}</span>  
+                    <span className="admin-user_data">email: {user.email} </span>
+                    <button className="admin-btn" onClick={()=>desativar_conta()}>
+                        status: {user.status_conta}
+                    </button>
+                </p>
             </div>
         )
     }
@@ -24,11 +30,11 @@ export default function AdminPage(){
     return(
         <div className="admin-AdminPage">
             <div className="center_content">
-                 <h1>Admin Page</h1>
-            <button onClick={()=>teste()}>Listar Usuários</button>
-            {listUsers.map((user:any)=>{
-                return ListUserItem(user)
-            })}
+                 <h1>Painel do Administrador</h1>
+                <button onClick={()=>teste()} className="admin-btn">Listar Usuários</button>
+                {listUsers.map((user:any)=>{
+                    return ListUserItem(user)
+                })}
             </div>
         </div>
     )
