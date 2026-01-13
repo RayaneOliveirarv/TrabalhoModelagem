@@ -1,5 +1,5 @@
 // ============================================
-// NOVO: Hook customizado para chamadas à API
+// Hook customizado para chamadas à API
 // Simplifica gerenciamento de loading, data e error
 // ============================================
 
@@ -10,14 +10,14 @@ interface UseApiOptions {
   onError?: (error: string) => void;
 }
 
-// NOVO: Hook que encapsula lógica comum de requisições
+//Hook que encapsula lógica comum de requisições
 export const useApi = <T = any,>(apiFunction: (...args: any[]) => Promise<T>, options?: UseApiOptions) => {
-  // NOVO: Estados para gerenciar requisição
+  //Estados para gerenciar requisição
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // NOVO: Função que executa a chamada à API
+  //Função que executa a chamada à API
   const execute = async (...args: any[]) => {
     setLoading(true);
     setError(null);

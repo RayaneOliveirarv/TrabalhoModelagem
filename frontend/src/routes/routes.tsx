@@ -14,16 +14,19 @@ import ResultadosBusca from '../pages/ResultadosBusca';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 const AppRoutes: React.FC = () => {
+  // Verifica se usuário está autenticado
   const { isAuthenticated } = useAuth();
 
   return (
     <Router>
       <Routes>
+        {/* Redireciona para feed se já estiver logado */}
         <Route 
           path="/" 
           element={isAuthenticated ? <Navigate to="/feed" replace /> : <Login />} 
         />
         <Route path="/cadastro" element={<Cadastro />} />
+        {/* Rota protegida - apenas usuários autenticados */}
         <Route 
           path="/alterarCadastro" 
           element={
@@ -32,6 +35,7 @@ const AppRoutes: React.FC = () => {
             </ProtectedRoute>
           } 
         />
+        {/* Rota protegida - apenas ONG e PROTETOR podem acessar */}
         <Route 
           path="/alterar-conta-ong" 
           element={

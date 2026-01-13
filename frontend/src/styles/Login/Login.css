@@ -4,30 +4,16 @@
 .login-bg {
   min-height: 100vh;
   width: 100vw;
-  height: 100vh;
   background: linear-gradient(120deg, #f8fafc 0%, #e0f7fa 50%, #fce4ec 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 0;
+  justify-content: flex-start;
+  padding: 20px;
   box-sizing: border-box;
   overflow-x: hidden;
   overflow-y: auto;
   animation: bg-move 12s ease-in-out infinite alternate;
-}
-html, body {
-  width: 100vw;
-  height: 100vh;
-  min-width: 100vw;
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 @keyframes bg-move {
@@ -266,35 +252,31 @@ html, body {
   .login-bg {
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     min-height: 100vh;
-    min-width: 100vw;
-    width: 100vw;
-    height: 100vh;
-    padding: 0;
+    padding: 40px 20px;
     box-sizing: border-box;
-    overflow: hidden;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
   .login-header {
     margin-bottom: 32px;
+    flex-shrink: 0;
   }
   .login-card {
     min-width: 400px;
     max-width: 420px;
-    padding: 56px 56px 40px 56px;
+    padding: 40px 48px;
     border-radius: 32px;
+    margin-bottom: 40px;
+    flex-shrink: 0;
   }
 }
 
   /* Responsividade: Mobile */
   @media (max-width: 600px) {
     .login-bg {
-      padding-top: 16px;
+      padding: 16px 8px;
     }
     .login-header {
       margin-bottom: 16px;
@@ -309,9 +291,9 @@ html, body {
     }
     .login-card {
       min-width: unset;
-      width: 98vw;
-      max-width: 99vw;
-      padding: 18px 6px 14px 6px;
+      width: 95vw;
+      max-width: 95vw;
+      padding: 20px 16px;
       border-radius: 14px;
     }
     .login-card h3 {
@@ -321,14 +303,14 @@ html, body {
       font-size: 0.93rem;
     }
     form {
-      gap: 7px;
+      gap: 10px;
     }
     label {
       font-size: 0.93rem;
     }
     .login-btn {
       font-size: 0.97rem;
-      padding: 8px 0;
+      padding: 10px 0;
     }
     .forgot-password {
       font-size: 0.93rem;

@@ -1,12 +1,14 @@
 .post-modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(30, 41, 59, 0.35);
+  background: rgba(30, 41, 59, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
   animation: fadeIn 0.2s;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 @keyframes fadeIn {
@@ -18,14 +20,15 @@
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 8px 32px #667eea33;
-  padding: 32px 28px 24px 28px;
-  min-width: 340px;
-  max-width: 95vw;
+  padding: 28px 24px 24px 24px;
   width: 100%;
-  max-height: 90vh;
+  max-width: 500px;
+  max-height: 85vh;
   overflow-y: auto;
   position: relative;
   animation: popIn 0.22s cubic-bezier(.4,2,.6,1);
+  margin: auto;
+  box-sizing: border-box;
 }
 
 @keyframes popIn {
@@ -50,16 +53,16 @@
 
 .post-modal h2 {
   margin-top: 0;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
   color: #667eea;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 700;
 }
 
 .post-modal form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
 }
 
 .post-modal label {
@@ -68,6 +71,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  font-size: 0.95rem;
 }
 
 .post-modal input[type="text"],
@@ -100,7 +104,7 @@
   border: none;
   border-radius: 8px;
   padding: 10px 0;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   cursor: pointer;
   margin-top: 8px;
@@ -110,4 +114,40 @@
 .submit-btn:hover {
   background: linear-gradient(90deg, #764ba2 0%, #667eea 100%);
   box-shadow: 0 4px 16px #667eea33;
+}
+
+@media (max-width: 600px) {
+  .post-modal-overlay {
+    padding: 10px;
+  }
+  
+  .post-modal {
+    max-width: 95vw;
+    padding: 24px 20px 20px 20px;
+    max-height: 90vh;
+  }
+  
+  .post-modal h2 {
+    font-size: 1.2rem;
+    margin-bottom: 14px;
+  }
+  
+  .post-modal form {
+    gap: 12px;
+  }
+  
+  .post-modal label {
+    font-size: 0.9rem;
+  }
+  
+  .submit-btn {
+    font-size: 1rem;
+    padding: 9px 0;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 768px) {
+  .post-modal {
+    max-width: 550px;
+  }
 }
