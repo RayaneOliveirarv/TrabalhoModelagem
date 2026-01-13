@@ -5,32 +5,38 @@
 
 div.admin-AdminPage{
 min-height: 100vh;
-  background: linear-gradient(135deg, #b5e9f1 0%, #f5f5f5 100%);
+  background: linear-gradient(135deg, #b7b0ff 0%, #d5b0ff 100%);
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   width: 100vw;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
 }
 
 div.center_content{
+  background: linear-gradient(135deg, #b9a2fa 0%, #9088ff 100%);
+  box-shadow: 0.5em 1em 1em rgba(0, 0, 0, 0.295);
+    margin: 1em;
+    border-radius: 2em;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
     width: 100%;
+    height: 90vh;
     padding: 2em;
 }
 
 div.user_item{
+    font-weight: bolder;
     width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     padding: 1em;
-    background-color:#606fbbce;
+    background: linear-gradient(90deg, #669bea 0%, #9d79ff 100%);
     border-bottom: 1px solid rgb(54, 52, 52);
     margin: 1em;
     text-align: center;
@@ -40,31 +46,179 @@ div.user_item{
     box-shadow: 0.1em 0.1em 0.6em #000;
 }
 
+div.admin-title{
+    font-weight: bolder;
+    width: 50%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+    background: linear-gradient(90deg, #669bea 0%, #9d79ff 100%);
+    border-bottom: 1px solid rgb(54, 52, 52);
+    margin: 1em;
+    text-align: center;
+    color: #fff;
+    border: none;
+    border-radius: 1em;
+    box-shadow: 0.1em 0.1em 0.6em #000;
+}
+div.admin-title button{
+  margin-left: 2em;
+}
+div.admin-row{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+div.admin-column_start{
+  display: flex;
+  align-items: flex-start;
+  height: 100%;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+div.admin-selected_content{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 70%;
+  padding: 2em;
+}
 
+div.admin-gen_container{
+    background: linear-gradient(90deg, #669bea 0%, #9d79ff 100%);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2em;
+    border-radius: 1em;
+    box-shadow: 0.1em 0.1em 0.6em #000;
+}
+
+div.admin-dialog{
+  padding: 2em;
+  border-radius: 2em;
+  box-shadow: 0.1em 0.1em 0.6em #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: bolder;
+  color: #fff;
+  width: 50%;
+  height: 50vh;
+  background: linear-gradient(90deg, #669bea 0%, #9d79ff 100%);
+}
+div.admin-input_Container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 1em;
+}
+div.admin-input_Container p{
+  margin: 0.5em;
+  font-size: 1em;
+
+}
+
+div.admin-text{
+  width: 100%;
+  padding: 1em;
+  border-radius: 2em;
+  
+}
+div.admin-text.ativo{
+  background: linear-gradient(90deg, #5ad396 0%, #43ff3d 100%);
+  color: black;
+}
+div.admin-text.bloqueado{
+  background: linear-gradient(90deg, #ea6666 0%, #ff4444 100%);
+
+}
+div.admin-text.pendente{
+  background: linear-gradient(90deg, #eadd66 0%, #fdfba1 100%);
+}
 
 /*botões*/
-button.admin-btn{
-  background-color: black;
+button.admin-btn {
+  background: linear-gradient(90deg, #667eea 0%, #a1c4fd 100%);
   color: #fff;
-  border-radius: 2em;
-  padding: 1em;
-  box-shadow: 0.1em 0.1em 0.6em #000;
   border: none;
+  border-radius: 8px;
+  padding: 1em;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin:0.3em;
+  box-shadow: 0 2px 8px #b2ebf244;
+  transition: all 0.2s;
 }
 
-button.admin-btn:hover{
-  cursor: pointer;
-  background-color: gray;
+button.admin-btn:hover {
+  background: linear-gradient(90deg, #764ba2 0%, #667eea 100%);
+  box-shadow: 0 4px 16px #667eea33;
+  transform: translateY(-1px);
 }
-button.admin-btn:active{
-  background-color: #fff;
-  color: #000;
+
+button.admin-btn:active {
+  transform: translateY(0);
+}
+
+button.remove_account{
+  background: linear-gradient(90deg, #ea6666 0%, #ff4444 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 1em;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin:0.3em;
+  box-shadow: 0 2px 8px #b2ebf244;
+  transition: all 0.2s;
 }
 
 /*spans*/
 span.admin-user_data{
-  background-color: #000;
+  background: linear-gradient(90deg, #4b6ea2 0%, #1f5fe7 100%);
   padding: 0.8em;
   border-radius: 0.8em;
   margin-right: 1em;
+}
+
+
+/*p*/
+p.admin-advice{
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bolder;
+  padding: 1em;
+  border-radius: 2em;
+  color: #fff;
+  margin-bottom: 1.2em;
+  background: linear-gradient(90deg, #669bea 0%, #9d79ff 100%);
+
+}
+
+select{
+  background-color: #e1ecfc;
+  border: none;
+  padding: 1em;
+  font-weight: bold;
+}
+
+textarea{
+  resize: none;
+  background-color: #e1ecfc;
+  border: none;
+  padding: 1em;
+  height: 10vh;
+  width: 25vw;
 }

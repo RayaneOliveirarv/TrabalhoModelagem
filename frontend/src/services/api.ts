@@ -126,8 +126,6 @@ async getDadosUsuario(id: number) {
     method: 'GET',
   });
 
-  console.log("resposta na api: ",response)
-
   return this.handleResponse<any>(response);
 }
 
@@ -139,6 +137,17 @@ async getDadosUsuario(id: number) {
     return this.handleResponse<{ mensagem: string }>(response);
   }
 
+  async moderarConta(id:number,status:string,motivo?:string){
+    const response = await fetch(`${this.baseUrl}/usuarios/moderar/${id}`,{
+      method: 'PUT',
+      body: JSON.stringify({
+        acao:status,
+        motivo:motivo
+      }),
+    })
+
+    return this.handleResponse<{ mensagem: string }>(response);
+  }
   async enviarDocumentacao(id: number, arquivo: File) {
     const formData = new FormData();
     formData.append('documento', arquivo);
