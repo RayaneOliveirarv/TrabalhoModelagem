@@ -87,6 +87,14 @@ const AppRoutes: React.FC = () => {
             </ProtectedRoute>
           } 
         />
+        <Route 
+          path="/busca" 
+          element={
+            <ProtectedRoute>
+              <ResultadosBusca />
+            </ProtectedRoute>
+          } 
+        />
       </Routes>
     </Router>
   );
