@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Select from 'react-select'; // NOVO: Import do componente Select
 import './PostModal.css';
 
 interface PostModalProps {
@@ -21,12 +20,6 @@ export interface PostData {
   imagem?: File | null;
 }
 
-// Interface para o formato exigido pelo react-select
-interface CidadeOption {
-  value: string;
-  label: string;
-}
-
 const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, onSubmit }) => {
   const [nome, setNome] = useState('');
   const [descricao, setDescricao] = useState('');
@@ -39,26 +32,24 @@ const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, onSubmit }) => {
   const [ultimaLocalizacao, setUltimaLocalizacao] = useState('');
   const [imagem, setImagem] = useState<File | null>(null);
 
-  // ESTADOS PARA AS CIDADES
-  const [optionsCidades, setOptionsCidades] = useState<CidadeOption[]>([]);
+  const [cidades, setCidades] = useState<string[]>([]);
   const [carregandoCidades, setCarregandoCidades] = useState(false);
 
   useEffect(() => {
-    if (isOpen && optionsCidades.length === 0) {
+    if (isOpen && cidades.length === 0) {
       setCarregandoCidades(true);
       fetch("https://servicodados.ibge.gov.br/api/v1/localidades/municipios?orderBy=nome")
         .then(response => response.json())
         .then(data => {
-          const formatado = data.map((mun: any) => ({
-            value: `${mun.nome}, ${mun.microrregiao?.mesorregiao?.UF?.sigla || 'UF'}`,
-            label: `${mun.nome}, ${mun.microrregiao?.mesorregiao?.UF?.sigla || 'UF'}`
-          }));
-          setOptionsCidades(formatado);
+          const formatado = data.map((mun: any) => 
+            `${mun.nome} - ${mun.microrregiao?.mesorregiao?.UF?.sigla || 'UF'}`
+          );
+          setCidades(formatado);
         })
         .catch(err => console.error("Erro ao carregar cidades:", err))
         .finally(() => setCarregandoCidades(false));
     }
-  }, [isOpen, optionsCidades.length]);
+  }, [isOpen, cidades.length]);
 
   if (!isOpen) return null;
 
@@ -78,80 +69,98 @@ const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, onSubmit }) => {
     onClose();
   };
 
-  // Estilização customizada para o react-select combinar com seu layout
-  const customStyles = {
-    control: (base: any) => ({
-      ...base,
-      borderRadius: '8px',
-      borderColor: '#ddd',
-      marginTop: '5px',
-      minHeight: '38px',
-    })
-  };
-
   return (
     <div className="post-modal-overlay" onClick={onClose}>
       <div className="post-modal" onClick={e => e.stopPropagation()}>
         <button className="close-btn" onClick={onClose}>&times;</button>
         <h2>Novo Post de Animal</h2>
         <form onSubmit={handleSubmit}>
-          <label>Nome do animal
-            <input value={nome} onChange={e => setNome(e.target.value)} required />
+          <label>Nome do animal:
+            <input 
+              type="text"
+              value={nome} 
+              onChange={e => setNome(e.target.value)} 
+              required 
+              placeholder="Digite o nome do animal"
+            />
           </label>
           
-          <div className="row">
-            <label>Categoria
-              <select value={categoria} onChange={e => setCategoria(e.target.value)} required>
-                <option value="Adocao">Adoção</option>
-                <option value="Perdido">Perdido</option>
-                <option value="Encontrado">Encontrado</option>
-              </select>
-            </label>
+          <label>Tipo do animal:
+            <select value={especie} onChange={e => setEspecie(e.target.value)} required>
+              <option value="Cao">Cão</option>
+              <option value="Gato">Gato</option>
+              <option value="Felino">Felino</option>
+              <option value="Ave">Ave</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </label>
 
-            <label>Espécie
-              <select value={especie} onChange={e => setEspecie(e.target.value)} required>
-                <option value="Cao">Cão</option>
-                <option value="Gato">Gato</option>
-                <option value="Ave">Ave</option>
-                <option value="Outro">Outro</option>
-              </select>
-            </label>
-          </div>
+          <label>Estado do animal:
+            <select value={categoria} onChange={e => setCategoria(e.target.value)} required>
+              <option value="Adocao">Adoção</option>
+              <option value="Perdido">Perdido</option>
+              <option value="Encontrado">Encontrado</option>
+            </select>
+          </label>
 
-          <label>Localização
-            <Select
-              options={optionsCidades}
-              isLoading={carregandoCidades}
-              placeholder="Digite o nome da cidade..."
-              loadingMessage={() => "Carregando cidades..."}
-              noOptionsMessage={() => "Nenhuma cidade encontrada"}
-              onChange={(option) => setLocalizacao(option?.value || '')}
-              styles={customStyles}
-              isSearchable
+          <label>Localização:
+            <select 
+              value={localizacao} 
+              onChange={e => setLocalizacao(e.target.value)} 
               required
-            />
+              disabled={carregandoCidades}
+            >
+              <option value="">
+                {carregandoCidades ? 'Carregando cidades...' : 'Selecione uma cidade'}
+              </option>
+              {cidades.map((cidade, index) => (
+                <option key={index} value={cidade}>{cidade}</option>
+              ))}
+            </select>
           </label>
 
           {categoria === 'Perdido' && (
             <div className="perdido-fields">
-              <label>Data do Desaparecimento
-                <input type="date" value={dataDesaparecimento} onChange={e => setDataDesaparecimento(e.target.value)} required />
+              <label>Data do Desaparecimento:
+                <input 
+                  type="date" 
+                  value={dataDesaparecimento} 
+                  onChange={e => setDataDesaparecimento(e.target.value)} 
+                  required 
+                />
               </label>
-              <label>Última Localização Vista
-                <input value={ultimaLocalizacao} onChange={e => setUltimaLocalizacao(e.target.value)} required placeholder="Ex: Perto do mercado X" />
+              <label>Última Localização Vista:
+                <input 
+                  type="text"
+                  value={ultimaLocalizacao} 
+                  onChange={e => setUltimaLocalizacao(e.target.value)} 
+                  required 
+                  placeholder="Ex: Perto do mercado X" 
+                />
               </label>
             </div>
           )}
 
-          <label>Descrição
-            <textarea value={descricao} onChange={e => setDescricao(e.target.value)} required rows={4} />
+          <label>Descrição:
+            <textarea 
+              value={descricao} 
+              onChange={e => setDescricao(e.target.value)} 
+              required 
+              rows={4}
+              placeholder="Descreva o animal..."
+            />
           </label>
 
-          <label>Imagem
-            <input type="file" accept="image/*" onChange={e => setImagem(e.target.files?.[0] || null)} />
+          <label>Upload img:
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={e => setImagem(e.target.files?.[0] || null)} 
+            />
+            {imagem && <span className="file-name">{imagem.name}</span>}
           </label>
 
-          <button type="submit" className="submit-btn">Postar</button>
+          <button type="submit" className="submit-btn">Criar post</button>
         </form>
       </div>
     </div>
