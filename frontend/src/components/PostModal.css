@@ -139,6 +139,13 @@
   transform: translateY(0);
 }
 
+.post-modal select{
+  color: black;
+}
+.post-modal textarea{
+  color: black;
+}
+
 @media (max-width: 600px) {
   .post-modal-overlay {
     padding: 10px;
