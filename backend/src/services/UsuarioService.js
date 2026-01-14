@@ -127,6 +127,19 @@ export const UsuarioService = {
 
  async alterarSenha(usuarioId, senhaAtual, novaSenha) {
         return new Promise((resolve, reject) => {
+            // Validações básicas
+            if (!usuarioId || !senhaAtual || !novaSenha) {
+                return reject(new Error("Todos os campos são obrigatórios"));
+            }
+
+            if (novaSenha.length < 6) {
+                return reject(new Error("A nova senha deve ter pelo menos 6 caracteres"));
+            }
+
+            if (senhaAtual === novaSenha) {
+                return reject(new Error("A nova senha deve ser diferente da senha atual"));
+            }
+
             const sqlBusca = "SELECT senha FROM usuarios WHERE id = ?";
             
             db.query(sqlBusca, [usuarioId], (err, results) => {

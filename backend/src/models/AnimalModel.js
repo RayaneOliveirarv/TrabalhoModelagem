@@ -43,7 +43,7 @@ export const AnimalModel = {
     // COALESCE(o.nome, p.nome) pega o primeiro nome não nulo encontrado entre as tabelas
     let sql = `
       SELECT a.*, 
-             COALESCE(o.nome, p.nome) as dono_nome
+            COALESCE(o.nome, p.nome) as dono_nome
       FROM animais_adocao a
       LEFT JOIN ongs o ON a.ong_id = o.usuario_id
       LEFT JOIN protetores_individuais p ON a.protetor_id = p.usuario_id
@@ -51,7 +51,13 @@ export const AnimalModel = {
     
     const valores = [];
 
-    // Adiciona condições dinamicamente
+    // Adiciona busca por termo geral (nome, descrição, localização)
+    if (filtros.termo) {
+      sql += ` AND (a.nome LIKE ? OR a.descricao LIKE ? OR a.localizacao LIKE ?)`;
+      valores.push(`%${filtros.termo}%`, `%${filtros.termo}%`, `%${filtros.termo}%`);
+    }
+
+    // Filtros específicos
     if (filtros.categoria) {
       sql += ` AND a.categoria = ?`;
       valores.push(filtros.categoria);
@@ -64,8 +70,7 @@ export const AnimalModel = {
       sql += ` AND a.porte = ?`;
       valores.push(filtros.porte);
     }
-    if (filtros.localizacao) {
-      // LIKE permite buscas parciais (ex: "Lisboa" encontra "Distrito de Lisboa")
+    if (filtros.localizacao && !filtros.termo) {
       sql += ` AND a.localizacao LIKE ?`;
       valores.push(`%${filtros.localizacao}%`);
     }
@@ -78,7 +83,7 @@ export const AnimalModel = {
         else resolve(results);
       });
     });
-  },
+},
 
   /**
    * Busca detalhes de um animal e informações de contato do dono.

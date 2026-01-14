@@ -7,9 +7,10 @@ import {
   deletarAnimal,
   favoritarAnimal,
   listarFavoritos,
-  desfavoritarAnimal
+  desfavoritarAnimal,
+  buscarAvancada 
 } from "../controllers/AnimalController.js";
-import { uploadAnimal } from "../config/multer.js"; // Importação do middleware de upload
+import { uploadAnimal } from "../config/multer.js";
 
 const router = express.Router();
 
@@ -26,6 +27,12 @@ router.post("/cadastrar", uploadAnimal.single("foto"), cadastrarAnimal);
  * @desc    Lista todos os animais com filtros (Espécie, Porte, Cidade, etc)
  */
 router.get("/", listarAnimais); 
+
+/**
+ * @route   POST /animais/busca
+ * @desc    Busca avançada de animais com filtros
+ */
+router.post("/busca", buscarAvancada);
 
 /**
  * @route   GET /animais/:id
