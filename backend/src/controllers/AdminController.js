@@ -25,6 +25,7 @@ export const getPainelGeral = async (req, res) => {
  */
 export const moderarUsuario = async (req, res) => {
   try {
+    console.log("request no servidor: ", req.body);
     const { id } = req.params; // Pega o ID da URL
     const { acao, motivo } = req.body; // acao pode ser: 'Bloqueado', 'Ativo' ou 'Pendente'
 

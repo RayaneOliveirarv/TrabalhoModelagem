@@ -12,8 +12,15 @@ export default function AdminPage(){
     const[show_list, setShow_list] = useState(false);
     const[show_dialog, setShow_dialog] = useState(false);
     const[show_confirm, setShow_confirm] = useState(false);
+    const[show_alert, setShow_alert] = useState(false);
 
     const[user_classname, setUser_classname] = useState("admin-text");
+    const[Alert_props, setAlert_props] = useState({animation:"slide-up",animation_time:0.3});
+
+    const[motive, setMotive] = useState("");
+    const[action, setAction] = useState("Bloqueado");
+    const[ServerResolveMessage, setServerResolveMessage] = useState("teste");
+
     const navigator = useNavigate();
 
     const handleSelectUser = (user:any)=>{
@@ -32,10 +39,28 @@ export default function AdminPage(){
             }
     }
     const handle_remove = async ()=>{
-        await api.deletarConta(selected_user.id);
+        const res = await api.deletarConta(selected_user.id);
+        setServerResolveMessage(res.mensagem);
         setShow_confirm(false);
         setShow_dialog(false);
         List_Users();
+        handle_show_alert(2000,0.5);
+    }
+    const handle_update_user = async ()=>{
+        try{
+            const res = await api.moderarConta(selected_user.id, action,motive);
+            setServerResolveMessage(res.mensagem);
+            setShow_dialog(false);
+            setAction("Bloqueado");
+            List_Users();
+            handle_show_alert(2000,0.5);
+        }
+        catch(err:any)
+        {
+            setServerResolveMessage(err.erro ?? err.message);
+            setShow_dialog(false);
+            handle_show_alert(2000,0.5);
+        }
     }
     const dialog = ()=>{
         return(
@@ -43,7 +68,7 @@ export default function AdminPage(){
             {
                 show_confirm ?
                 <div style={{display:"flex", flexDirection:"column", alignItems:"center"}}>
-                    <p>Tem certeza que deseja excluir essa conta?</p>
+                    <p style={{color:"black"}}>Tem certeza que deseja excluir essa conta?</p>
                     <div>
                         <button className="admin-btn" onClick={()=>setShow_confirm(false)}>Cancelar</button>
                         <button className="admin-btn" onClick={()=>handle_remove()}>Confirmar</button>
@@ -56,25 +81,50 @@ export default function AdminPage(){
                             <p>Status atual da conta do usuário:{selected_user.status_conta}</p>
                         </div>
                         <p>Alterar Estado da Conta</p>
-                        <select>
+                        <select onChange={(e)=>setAction(e.target.value)}>
                             <option value="Bloqueado">Bloqueado</option>
                             <option value="Ativo">Ativo</option>
                             <option value="Pendente">Pendente</option>
                         </select>
                         <p>Motivo:</p>
-                        <textarea/>
+                        <textarea onChange={(e)=>setMotive(e.target.value)}/>
                     </div>
                     
                     <div style={{display:"flex", flexDirection:"column", alignItems:"center"}}>
                         <button className="admin-btn remove_account" onClick={()=>setShow_confirm(true)}>Excluir Conta do usuário</button>
                     <div>
                         <button className="admin-btn" onClick={()=>setShow_dialog(false)}>Cancelar</button>
-                        <button className="admin-btn" onClick={()=>setShow_dialog(false)}>Confirmar</button>
+                        <button className="admin-btn" onClick={()=>handle_update_user()}>Confirmar</button>
                     </div>
                     </div>
                 </div>
                 }
             </div> 
+        )
+    }
+
+    const handle_show_alert = (message_time:number, anim_time=0.3)=>{
+        let time = (anim_time*2*1000) + message_time;
+        let one_anim_time = anim_time*1000;
+        
+        setShow_alert(true);
+
+        setTimeout(() => {
+            setAlert_props({animation:"slide-down", animation_time:anim_time});
+        },one_anim_time + message_time);
+
+        setTimeout(() => {
+            setShow_alert(false);
+            setAlert_props({animation:"slide-up", animation_time:anim_time});
+
+        },time);
+    }
+
+    const alert = ()=>{
+        return(
+            <div className="admin-alert" style={{animation: `${Alert_props.animation} ${Alert_props.animation_time}s ease-in-out`}}>
+                <p>{ServerResolveMessage}</p>
+            </div>
         )
     }
 
@@ -130,6 +180,9 @@ export default function AdminPage(){
                         </div>
                 }
                 </div>
+            {
+                show_alert && alert()
+            }
             </div>
         </div>
     )

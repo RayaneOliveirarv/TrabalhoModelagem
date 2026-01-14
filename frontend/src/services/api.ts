@@ -134,14 +134,18 @@ async getDadosUsuario(id: number) {
       method: 'DELETE',
     });
 
-    return this.handleResponse<{ mensagem: string }>(response);
+    return this.handleResponse<{ mensagem: string}>(response);
   }
 
-  async moderarConta(id:number,status:string,motivo?:string){
-    const response = await fetch(`${this.baseUrl}/usuarios/moderar/${id}`,{
+  async moderarConta(id:number,acao:string,motivo?:string){
+    console.log(acao, " ,", motivo)
+    const response = await fetch(`${this.baseUrl}/admin/usuarios/${id}/moderar`,{
       method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
-        acao:status,
+        acao:acao,
         motivo:motivo
       }),
     })

@@ -26,7 +26,7 @@ router.get("/denuncias-usuarios", listarDenunciasUsuarios);
  * Usa PUT pois estamos a atualizar o estado ('status_conta') e a justificativa ('motivo_status') de um utilizador.
  * Exemplo de corpo: { "status": "Bloqueado", "motivo": "Uso indevido da plataforma" }
  */
-router.put("/usuario/moderar/:id", moderarUsuario);
+router.put("/usuarios/:id/moderar", moderarUsuario);
 
 /**
  * RF03: Validação de Credenciais (ONGs e Protetores)
