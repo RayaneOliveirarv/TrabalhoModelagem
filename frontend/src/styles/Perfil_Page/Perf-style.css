@@ -395,6 +395,30 @@ p.perf-small{
     gap: 6px;
 }
 
+
+.perf-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  margin: 0 24px 0 0;
+  border: 4px solid #667eea;
+  box-shadow: 0 8px 24px rgba(102,126,234,0.3);
+  object-fit: cover;
+  transition: transform 0.3s, box-shadow 0.3s;
+  background: linear-gradient(135deg, #667eea 0%, #a1c4fd 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 30px;
+  font-weight: 700;
+  backdrop-filter: blur(2px);
+  background-clip: padding-box;
+  opacity: 0.98;
+  flex-shrink: 0;
+}
+
 /* Media queries para responsividade do GerenciarPost */
 @media (max-width: 768px) {
     div.perf-GerenciarPost {

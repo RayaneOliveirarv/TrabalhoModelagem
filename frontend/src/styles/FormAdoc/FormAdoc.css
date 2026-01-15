@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+*{
+    font-family: "Poppins";
+}
+
+div.ForAdo-FormAdoc_cont{
+    width: 90vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 1em;
+}
+div.ForAdo-FormAdoc_content{
+    width: 100%;
+    margin: 1em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+div.ForAdo-Close button{
+    border: none;
+    background-color: lightgray;
+    padding: 0.5em;
+    border-radius: 1.5em;
+    font-size: 2em;
+    font-weight: medium;
+    cursor: pointer;
+}
+div.ForAdo-FormAdoc_header{
+    width: 95%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+div.ForAdo-Input_Container{
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin: 1em;
+}
+div.ForAdo-Input_Container p{
+    font-size: 1.2em;
+}
+div.ForAdo-Input_Container input{
+    background-color: lightgray;
+
+}
+
+div.ForAdo-row{
+    width: 92%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+div.ForAdo-row > div.ForAdo-Input_Container{
+    width: 100%;
+}
+
+@keyframes slide-up {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-0.1em);
+  }
+}
+
+div.ForAdo-Buttons_container{
+    display: flex;
+    justify-content: flex-end;
+    width: 98%;
+}
+button.ForAdo-btn {
+  background: linear-gradient(90deg, #667eea 0%, #a1c4fd 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 1em;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 2em;
+  margin-bottom: 2em;
+  box-shadow: 0 2px 8px #b2ebf244;
+}
+
+button.ForAdo-btn:hover{
+    animation: slide-up 0.5s ease-in-out;
+}

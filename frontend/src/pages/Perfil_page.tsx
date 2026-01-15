@@ -84,7 +84,9 @@ const Perfil_page = ()=>{
                 <div className="perf-white_box">
                     <div className="perf-User-info">
                     <div className="perf-row">
-                        <img src={template} className="perf-user_photo" alt="User profile photo"/>
+                        <div className="perf-avatar">
+                            {userProfile?.nome?.charAt(0).toUpperCase()}
+                        </div>
                         <div className="perf-column_start">
                             {loading ? (
                                 <p className="perf-User-text">Carregando...</p>

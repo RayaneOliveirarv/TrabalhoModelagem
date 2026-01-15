@@ -68,7 +68,16 @@ const handleFilterCategory = (categoria: string) => {
 });
 
   // Função para abrir o modal
-  const handleOpenModal = () => {
+  const handleOpenModal = () => {   
+    if(user?.tipo === "ADOTANTE") {
+        setPostError('Apenas ONGs e Protetores podem cadastrar animais perdidos, ou colocar para adoção.');  
+        setPostLoading(false);
+        setTimeout(() => {
+          setPostError('');
+        },3000);
+
+        return;
+      }
     setModalOpen(true);
     setPostError('');
     setPostSuccess('');
@@ -148,7 +157,6 @@ const handleFilterCategory = (categoria: string) => {
         {postSuccess && <div className="feed-success">{postSuccess}</div>}
         
         {loading && <div className="feed-message">Carregando animais...</div>}
-        {error && <div className="feed-error">{error}</div>}
         
         {!loading && !error && animaisFiltrados.length === 0 && (
           <div className="feed-message">
@@ -208,6 +216,7 @@ const handleFilterCategory = (categoria: string) => {
           ))}
         </div>
       </div>
+      {error && <div className="feed-error">{error}</div>}
     </div>
   );
 };

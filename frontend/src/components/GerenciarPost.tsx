@@ -90,6 +90,7 @@ const GerenciarPost: React.FC<GerenciarPostProps> = ({ setShowManage, animalId }
                 // Para upload com imagem, precisaria de um endpoint específico
                 // Por enquanto, vamos atualizar sem a imagem
                 await api.atualizarAnimal(animalId, {
+                    usuario_id: user?.id,
                     nome,
                     especie: tipo,
                     categoria: estado,
@@ -101,6 +102,7 @@ const GerenciarPost: React.FC<GerenciarPostProps> = ({ setShowManage, animalId }
             } else {
                 // Atualizar sem imagem
                 await api.atualizarAnimal(animalId, {
+                    usuario_id: user?.id,
                     nome,
                     especie: tipo,
                     categoria: estado,

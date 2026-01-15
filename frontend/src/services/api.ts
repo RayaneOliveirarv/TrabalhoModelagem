@@ -193,7 +193,7 @@ async getDadosUsuario(id: number) {
   }
 
   async atualizarAnimal(id: number, dados: any) {
-    const response = await fetch(`${this.baseUrl}/animais/editar/${id}`, {
+    const response = await fetch(`${this.baseUrl}/animais/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

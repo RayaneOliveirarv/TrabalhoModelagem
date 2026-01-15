@@ -50,7 +50,32 @@ body {
   font-weight: 500;
 }
 
+@keyframes slide-up{
+  0%{
+    opacity: 0;
+    transform: translateY(3em);
+  }
+  100%{
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-down{
+  0%{
+    opacity: 0;
+    transform: translateY(0);
+  }
+  100%{
+    opacity: 1;
+    transform: translateY(3em);
+  }
+}
+
 .feed-error {
+  animation: slide-up 0.3s ease-in-out;
+  position: fixed;
+  bottom: 10%;
   background: #ffebee;
   color: #c62828;
   padding: 12px 20px;
