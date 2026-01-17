@@ -113,6 +113,8 @@ export const getDadosUsuario = async (req,res)=>{
   }
 }
 
+
+
 export const alterarSenha = async (req, res) => {
     const { usuarioId, senhaAtual, novaSenha } = req.body;
 

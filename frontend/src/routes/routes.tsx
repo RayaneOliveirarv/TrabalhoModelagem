@@ -82,9 +82,7 @@ const AppRoutes: React.FC = () => {
         <Route 
           path="/admin" 
           element={
-            <ProtectedRoute>
               <AdminPage />
-            </ProtectedRoute>
           } 
         />
         <Route 
