@@ -137,7 +137,20 @@ const handleFilterCategory = (categoria: string) => {
     }
   };
 
-
+  const handleFavorite = async (animalId: number) => {
+    try {
+      await api.adicionarFavorito(user!.id, animalId);
+      const novosAnimais = await api.listarAnimais();
+      setAnimais(novosAnimais);
+    } catch (err: any) {
+      console.error('Erro ao favoritar animal:', err);
+      setPostError(err.message);  
+        setPostLoading(false);
+        setTimeout(() => {
+          setPostError('');
+        },3000);
+    }
+  }
 
   return (
     <div className="feed-page">
@@ -208,7 +221,7 @@ const handleFilterCategory = (categoria: string) => {
                   <FaComment size={16} />
                   <span>6</span>
                 </button>
-                <button className="feed-card-action-btn favorite">
+                <button className="feed-card-action-btn favorite" onClick={() => handleFavorite(animal.id)}>
                   <FaStar size={16} />
                 </button>
               </div>

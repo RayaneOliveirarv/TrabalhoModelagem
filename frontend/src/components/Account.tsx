@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import api from "../services/api";
-
+import { useNavigate } from "react-router-dom";
 const Account : React.FC = ()=>{
     const { user } = useAuth();
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
-
+    const navigator = useNavigate();
 
     const handleExcluirConta = async () => {
         if (!user) return;
@@ -36,6 +36,17 @@ const Account : React.FC = ()=>{
                 
                 <hr className="conf-thin_border" style={{margin: '32px 0'}}/>
                 
+                <div>
+                    <p><b>Alterar tipo</b></p>
+                    <p className="conf-fade">Essa ação é permanente e não pode ser desfeita. Todos os seus dados serão removidos</p>
+                    <button 
+                        className="conf-submit_btn" 
+                        onClick={()=>navigator('/alterarCadastro')}
+                    >
+                        Alterar
+                    </button>
+                </div>
+                <hr className="conf-thin_border" style={{margin: '32px 0'}}/>
                 <div>
                     <p><b>Excluir conta</b></p>
                     <p className="conf-fade">Essa ação é permanente e não pode ser desfeita. Todos os seus dados serão removidos</p>

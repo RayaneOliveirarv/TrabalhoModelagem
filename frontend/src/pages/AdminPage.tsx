@@ -67,7 +67,7 @@ export default function AdminPage(){
             <div className="admin-dialog">
             {
                 show_confirm ?
-                <div style={{display:"flex", flexDirection:"column", alignItems:"center"}}>
+                <div   style={{display:"flex", flexDirection:"column", alignItems:"center"}}>
                     <p style={{color:"black"}}>Tem certeza que deseja excluir essa conta?</p>
                     <div>
                         <button className="admin-btn" onClick={()=>setShow_confirm(false)}>Cancelar</button>

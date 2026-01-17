@@ -9,6 +9,7 @@ interface PerfilPostViewProps {
     status: string;
     foto?: string;
     dataCriacao?: string;
+    isFav?: boolean;
 }
 
 const Perfil_Post_View : React.FC<PerfilPostViewProps> = (props) => {
@@ -71,7 +72,7 @@ const Perfil_Post_View : React.FC<PerfilPostViewProps> = (props) => {
                 {Post_Status()}
                 <button className="perf-dots"><RxDotsHorizontal style={{fontSize:"1.5em"}} onClick={()=>show_manage()}/></button>
             </div>
-            {showManage && <GerenciarPost setShowManage={setShowManage} animalId={props.id}/>}
+            {showManage && <GerenciarPost setShowManage={setShowManage} animalId={props.id} isFav={props.isFav}/>}
         </div>
     )
 }

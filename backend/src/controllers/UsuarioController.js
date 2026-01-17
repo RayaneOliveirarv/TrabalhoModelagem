@@ -80,6 +80,7 @@ export const atualizarUsuario = async (req, res) => {
     
     // O Service atualiza tanto a tabela 'usuarios' quanto a tabela específica do perfil
     await UsuarioService.editarPerfil(id, tipo, dados);
+    await UsuarioService.alterarTipo(id,tipo);
     res.json({ mensagem: "Perfil atualizado com sucesso" });
   } catch (err) {
     res.status(400).json({ erro: err.message });

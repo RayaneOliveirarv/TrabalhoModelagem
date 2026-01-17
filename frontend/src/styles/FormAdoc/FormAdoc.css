@@ -5,9 +5,10 @@
 }
 
 div.ForAdo-FormAdoc_cont{
-    width: 90vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     display: flex;
+    background: linear-gradient(135deg, #e8f5f7 0%, #f5f5f5 100%);
     flex-direction: column;
     margin: 1em;
 }
@@ -64,19 +65,20 @@ div.ForAdo-row > div.ForAdo-Input_Container{
     width: 100%;
 }
 
-@keyframes slide-up {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(-0.1em);
-  }
-}
-
 div.ForAdo-Buttons_container{
     display: flex;
+    align-items: center;
     justify-content: flex-end;
     width: 98%;
+}
+
+div.ForAdo-textarea textarea{
+    margin: 1em;
+    background-color: lightgray;
+    color: black;
+}
+div.ForAdo-textarea p{
+    margin-left: 1em;
 }
 button.ForAdo-btn {
   background: linear-gradient(90deg, #667eea 0%, #a1c4fd 100%);
@@ -93,5 +95,45 @@ button.ForAdo-btn {
 }
 
 button.ForAdo-btn:hover{
-    animation: slide-up 0.5s ease-in-out;
+    cursor: pointer;
+}
+
+
+@keyframes slide-up {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-down {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+div.ForAdo-error{
+    position: inherit;
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  font-weight: bolder;
+  color: #fff;
+  margin-bottom: 1.2em;
+  font-size: 1rem;
+  width: 100%;
+  height: 10%;
+  
+}
+div.ForAdo-error p{
+  margin: auto;
+  background: linear-gradient(90deg, #669bea 0%, #9d79ff 100%);
+  border-radius: 2em;
+  width: fit-content;
+  padding: 1.5em;
+  height: 100%;
 }

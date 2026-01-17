@@ -97,6 +97,17 @@ export const UsuarioService = {
   /**
    * Editar Perfil
    */
+  async alterarTipo(id,tipo){
+    const sql = "UPDATE usuarios SET tipo = ? WHERE id = ?";
+    console.log("id no servidor: ",id, ", tipo: ",tipo)
+
+    return new Promise((resolve, reject) => {
+        db.query(sql, [tipo,id], (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        })});
+    
+  },
   async editarPerfil(id, tipo, dados) {
     if (dados.senha) {
       await UsuarioModel.atualizarSenha(id, dados.senha);

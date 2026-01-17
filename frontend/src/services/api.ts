@@ -106,16 +106,30 @@ async atualizarSenha(dados: {
     }>(response);
   }
 
-  async atualizarPerfil(id: number, tipo: string, dados: {
-    nome: string;
-    email: string;
-  }) {
+  async atualizarPerfil(id: number, tipo: string, dados:any) {
+      let type_Data = {};
+    
+          if(dados.tipo === 'ONG')
+            type_Data = {
+              cnpj: dados.cnpj,
+              nome: dados.nome,
+              historia: dados.historia,
+              tipo: dados.tipo,
+            };
+          else if(dados.tipo === 'PROTETOR')
+          {
+            type_Data={
+              cpf: dados.cpf,
+              nome: dados.nome,
+              tipo: dados.tipo,
+            }
+          }
     const response = await fetch(`${this.baseUrl}/usuarios/perfil/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({...dados}),
+      body: JSON.stringify({...type_Data}),
     });
 
     return this.handleResponse<{ mensagem: string }>(response);
@@ -257,7 +271,7 @@ async getDadosUsuario(id: number) {
 
   // ==================== FAVORITOS ====================
   async adicionarFavorito(adotante_id: number, animal_id: number) {
-    const response = await fetch(`${this.baseUrl}/animais/favoritar`, {
+    const response = await fetch(`${this.baseUrl}/animais/favoritos`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -269,7 +283,7 @@ async getDadosUsuario(id: number) {
   }
 
   async removerFavorito(adotante_id: number, animal_id: number) {
-    const response = await fetch(`${this.baseUrl}/animais/desfavoritar`, {
+    const response = await fetch(`${this.baseUrl}/animais/favoritos/${adotante_id}/${animal_id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -278,6 +292,10 @@ async getDadosUsuario(id: number) {
     });
 
     return this.handleResponse<{ mensagem: string }>(response);
+  }
+  async listarFavoritos(adotante_id: number) {
+    const response = await fetch(`${this.baseUrl}/animais/favoritos/${adotante_id}`);
+    return this.handleResponse<any[]>(response);
   }
   async listarUsuarios() {
     const response = await fetch(`${this.baseUrl}/admin/usuarios`);

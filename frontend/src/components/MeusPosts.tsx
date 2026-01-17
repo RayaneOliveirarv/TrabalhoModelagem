@@ -58,6 +58,7 @@ const MeusPosts : React.FC = () => {
                     status={animal.categoria}
                     foto={animal.foto_url}
                     dataCriacao={animal.data_criacao}
+                    isFav={false}
                 />
             ))}
         </div>

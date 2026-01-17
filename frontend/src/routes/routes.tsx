@@ -42,7 +42,7 @@ const AppRoutes: React.FC = () => {
         <Route 
           path="/alterar-conta-ong" 
           element={
-            <ProtectedRoute requiredTypes={['ONG', 'PROTETOR']}>
+            <ProtectedRoute>
               <AlterarContaONG />
             </ProtectedRoute>
           } 

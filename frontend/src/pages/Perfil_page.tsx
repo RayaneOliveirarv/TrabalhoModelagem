@@ -19,8 +19,8 @@ const Perfil_page = ()=>{
     const [userProfile, setUserProfile] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [animaisCount, setAnimaisCount] = useState(0);
-    const [active_Screen, setActiveScreen] = useState("MeusPosts");
-    const [screen_element, setScreen_element] = useState<any>(<MeusPosts/>);
+    const [active_Screen, setActiveScreen] = useState("Favoritos");
+    const [screen_element, setScreen_element] = useState<any>(<Favoritos/>);
 
     useEffect(() => {
         const carregarPerfil = async () => {

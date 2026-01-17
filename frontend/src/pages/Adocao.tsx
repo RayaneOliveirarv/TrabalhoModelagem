@@ -1,4 +1,4 @@
-import { MdEmail, MdMail } from "react-icons/md";
+import { MdMail } from "react-icons/md";
 import api from "../services/api";
 import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
@@ -7,8 +7,10 @@ import NavbarPrincipal from "../components/NavbarPrincipal";
 import FormAdoc from "../components/FormularioAdocao";
 const adocao:React.FC = () =>{
     const [animais, setAnimais] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
+    const [selected_animal, setSelectedAnimal] = useState<any>(null);
+    
+    const [message_classname, setMessage_classname] = useState("");
+    const [Message, setMessage] = useState('');
     const {user} = useAuth();
     const [showForm, setShowForm] = useState(false);
 
@@ -19,21 +21,32 @@ const adocao:React.FC = () =>{
             const adoc_data = data.filter((animal)=> animal?.categoria === 'Adocao');
             setAnimais(adoc_data);
           } catch (err: any) {
-            setError('Erro ao carregar animais: ' + err.message);
-          } finally {
-            setLoading(false);
+            setMessage('Erro ao carregar animais: ' + err.message);
           }
         };
         carregarAnimais();
       }, []);
-
+    
+    const handle_select_animal = (animal: any) => {
+        if(user?.tipo === "PROTETOR")
+        {
+            setMessage_classname("error");
+            setMessage("Protetores não podem adotar animais, por favor, crie uma conta de adotante");
+            setTimeout(() => {
+                setMessage('');
+            }, 3000);
+            return;
+        }
+        setSelectedAnimal(animal.id);
+        setShowForm(true);
+    }
     return(
         <div className="Ado-Adocao_container">
             <NavbarPrincipal/>
             {
             showForm 
             ? 
-                <FormAdoc setShow={setShowForm}/> 
+                <FormAdoc setShow={setShowForm} ids={{user:user?.id, animal:selected_animal} } SetMessage_classname={setMessage_classname} SetMessage={setMessage}/> 
             :
                 <div className="Ado-feed_H_Scroll">
                         {
@@ -57,13 +70,14 @@ const adocao:React.FC = () =>{
                                         </div>
                                     </div>
                                 <div className="Ado-btn_cont">
-                                    <button className="Ado-card_button" onClick={()=>setShowForm(true)}>Entrar em Contato</button>
+                                    <button className="Ado-card_button" onClick={()=>handle_select_animal(animal)}>Entrar em Contato</button>
                                 </div>
                             </div>
                             ))
                         }        
                 </div>
             }
+            {Message && <div className={`Ado-Message ${message_classname}`}><p>{Message}</p></div>}
             </div>
     )
 }

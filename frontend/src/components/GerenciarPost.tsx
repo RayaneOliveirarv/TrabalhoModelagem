@@ -7,9 +7,10 @@ import { useAuth } from "../contexts/AuthContext";
 interface GerenciarPostProps {
     setShowManage: React.Dispatch<React.SetStateAction<boolean>>;
     animalId: number;
+    isFav?:boolean
 }
 
-const GerenciarPost: React.FC<GerenciarPostProps> = ({ setShowManage, animalId }) => {
+const GerenciarPost: React.FC<GerenciarPostProps> = ({ setShowManage, animalId, isFav}) => {
     const { user } = useAuth();
     const [nome, setNome] = useState('');
     const [tipo, setTipo] = useState('Felino');
@@ -123,6 +124,19 @@ const GerenciarPost: React.FC<GerenciarPostProps> = ({ setShowManage, animalId }
     };
 
     const handleExcluir = async () => {
+        if(isFav)
+        {
+            try{
+            await api.removerFavorito(user!.id, animalId);
+            setShowManage(false);
+            window.location.reload(); // Recarregar para atualizar a lista
+            return;
+            }
+            catch(err:any){
+                console.error('Erro ao remover favorito:', err);
+                alert(err.message || 'Erro ao remover favorito');
+            }
+        }
         if (window.confirm('Tem certeza que deseja excluir este post? Esta ação não pode ser desfeita.')) {
             try {
                 await api.deletarAnimal(animalId, user?.id);
@@ -291,7 +305,7 @@ const GerenciarPost: React.FC<GerenciarPostProps> = ({ setShowManage, animalId }
                         className="perf-Button perf-red"
                         onClick={handleExcluir}
                     >
-                        Excluir post
+                        {isFav ? 'Excluir favorito' : 'Excluir post'}
                     </button>
                 </div>
             </form>
